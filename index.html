@@ -1,0 +1,1088 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="description" content="Nova Terra — экономический портал изолированного острова: экономика, Terra Coin, город, энергия, промышленность.">
+<title>Nova Terra</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Pixelify+Sans:wght@400..700&family=Manrope:wght@400..800&family=JetBrains+Mono:wght@400;600;700&display=swap">
+<style>
+/* Layout: government portal on deepslate ground; Minecraft GUI panels for data, notched pixel panels for content, one sticky section nav. */
+:root{
+  --bg:#0F2129; --bg2:#14303A; --panel:#183843; --panel-2:#1E4450; --edge:#0A161B;
+  --text:#EAF2EE; --muted:#A9BFB8; --gold:#F2B53A; --gold-2:#FBE38A; --grass:#5DA130; --grass-2:#8FD14F;
+  --water:#3F76E4; --water-2:#9CC0F5; --dirt:#7A5230; --stone:#C6C6C6; --stone-ink:#1D1D1D; --stone-mid:#8B8B8B;
+  --warn:#E36F6F; --plan:#7FB3E0;
+  --f-display:'Pixelify Sans','Courier New',monospace;
+  --f-body:'Manrope','Segoe UI',Arial,sans-serif;
+  --f-mono:'JetBrains Mono','Consolas',monospace;
+  color-scheme:dark;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:var(--bg);background-image:linear-gradient(rgba(15,33,41,.93),rgba(15,33,41,.93)),url(tex/deepslate.png);background-size:auto,64px;image-rendering:pixelated;color:var(--text);font-family:var(--f-body);font-size:16.5px;line-height:1.6}
+img,canvas,svg{max-width:100%}
+a{color:var(--gold-2)}
+h1,h2,h3{font-family:var(--f-display);font-weight:600;line-height:1.08;text-wrap:balance;margin:0}
+p{margin:0}
+.wrap{max-width:1200px;margin:0 auto;padding-inline:20px}
+.eyebrow{font-family:var(--f-mono);font-size:12.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--gold);font-weight:600}
+.lead{color:var(--muted);max-width:62ch;font-size:17.5px}
+section{padding-block:84px;scroll-margin-top:64px}
+.sec-head{display:grid;gap:14px;margin-bottom:40px}
+.sec-head h2{font-size:clamp(34px,5vw,54px)}
+.strip{height:32px;background:url(tex/grass_side.png);background-size:32px;image-rendering:pixelated;border-top:4px solid var(--edge);border-bottom:4px solid var(--edge)}
+.strip.stone{background-image:url(tex/stone.png)}
+.strip.water{background-image:url(tex/water.png)}
+.strip.planks{background-image:url(tex/planks.png)}
+.ico{display:inline-block;width:32px;height:32px;flex:none;image-rendering:pixelated}
+.ico svg{width:100%;height:100%;display:block}
+:focus-visible{outline:3px solid var(--gold);outline-offset:3px}
+
+/* pixel-notched panel */
+.px{background:var(--panel);box-shadow:0 -4px 0 0 var(--edge),0 4px 0 0 var(--edge),-4px 0 0 0 var(--edge),4px 0 0 0 var(--edge),inset 0 4px 0 0 rgba(255,255,255,.05)}
+/* Minecraft-like GUI panel */
+.gui{background:var(--stone);color:var(--stone-ink);box-shadow:inset 4px 4px 0 #fff,inset -4px -4px 0 #555,0 -4px 0 0 #000,0 4px 0 0 #000,-4px 0 0 0 #000,4px 0 0 0 #000}
+.slot{background:var(--stone-mid);box-shadow:inset 3px 3px 0 #373737,inset -3px -3px 0 #fff}
+
+/* header */
+.top{position:sticky;top:env(safe-area-inset-top,0px);z-index:50;background:rgba(10,22,27,.94);backdrop-filter:blur(6px);border-bottom:4px solid #000}
+.top .wrap{display:flex;align-items:center;gap:18px;min-height:60px}
+.brand{display:flex;align-items:center;gap:10px;text-decoration:none;color:var(--text);font-family:var(--f-display);font-size:22px;font-weight:700;letter-spacing:.04em;white-space:nowrap}
+.brand small{display:block;font-family:var(--f-mono);font-size:10px;letter-spacing:.16em;color:var(--muted);font-weight:400}
+.nav{display:flex;gap:4px;overflow-x:auto;scrollbar-width:none;margin-left:auto;min-width:0}
+.nav::-webkit-scrollbar{display:none}
+.nav a{font-family:var(--f-mono);font-size:12.5px;text-decoration:none;color:var(--muted);padding:8px 11px;white-space:nowrap;border:2px solid transparent;transition:color .15s,background .15s}
+.nav a:hover{color:var(--text);background:rgba(255,255,255,.06)}
+.nav a.on{color:var(--stone-ink);background:var(--stone);border-color:#000;box-shadow:inset 2px 2px 0 #fff,inset -2px -2px 0 #555}
+
+/* buttons */
+.btn{display:inline-flex;align-items:center;gap:10px;font-family:var(--f-display);font-size:19px;font-weight:600;color:#fff;text-decoration:none;padding:13px 22px;background:#6f6f6f url(tex/stone.png);background-size:48px;image-rendering:pixelated;border:3px solid #000;box-shadow:inset 3px 3px 0 rgba(255,255,255,.45),inset -3px -3px 0 rgba(0,0,0,.45);text-shadow:2px 2px 0 #2b2b2b;cursor:pointer;transition:transform .12s, filter .12s}
+.btn:hover{filter:brightness(1.12);transform:translateY(-2px)}
+.btn:active{transform:translateY(1px)}
+.btn.grass{background-image:linear-gradient(rgba(93,161,48,.35),rgba(93,161,48,.35)),url(tex/grass_side.png)}
+
+/* HERO */
+.hero{position:relative;overflow:hidden;border-bottom:4px solid #000;background:#1d4f9e}
+.hero canvas{position:absolute;inset:0;width:100%;height:100%;display:block}
+.hero::after{content:"";position:absolute;inset:0;background:linear-gradient(90deg,rgba(10,22,27,.92) 0%,rgba(10,22,27,.78) 38%,rgba(10,22,27,.15) 70%,rgba(10,22,27,0) 100%);pointer-events:none}
+.hero .wrap{position:relative;z-index:2;padding-block:84px 76px;display:grid;gap:22px}
+.hero h1{font-size:clamp(58px,11vw,132px);font-weight:700;letter-spacing:.03em;color:#fff;text-shadow:5px 5px 0 #000}
+.hero .sub{font-family:var(--f-display);font-size:clamp(22px,3vw,32px);color:var(--gold-2)}
+.hero p.desc{max-width:56ch;font-size:17.5px;color:#DCE8E3}
+.hero-stats{display:flex;flex-wrap:wrap;gap:16px}
+.chip{display:flex;align-items:center;gap:12px;padding:10px 16px 10px 12px}
+.chip b{font-family:var(--f-display);font-size:30px;line-height:1}
+.chip span{font-family:var(--f-mono);font-size:12px;letter-spacing:.08em;text-transform:uppercase;display:block}
+.hero-cta{display:flex;flex-wrap:wrap;gap:14px;margin-top:6px}
+.hero .legend-note{font-family:var(--f-mono);font-size:11.5px;color:#C9D8D2;letter-spacing:.06em}
+
+/* chains */
+.tabs{display:flex;flex-wrap:wrap;gap:10px;margin-bottom:26px}
+.tab{font-family:var(--f-display);font-size:18px;font-weight:600;padding:10px 18px;cursor:pointer;color:var(--stone-ink);background:var(--stone);border:3px solid #000;box-shadow:inset 3px 3px 0 #fff,inset -3px -3px 0 #555;display:flex;align-items:center;gap:10px}
+.tab[aria-selected="true"]{background:var(--gold);box-shadow:inset 3px 3px 0 var(--gold-2),inset -3px -3px 0 #A06E14}
+.tab .ico{width:24px;height:24px}
+.chain{display:flex;align-items:stretch;gap:0;flex-wrap:wrap;padding:30px 26px}
+.node{flex:1 1 150px;min-width:0;display:grid;justify-items:center;gap:12px;padding:16px 10px;cursor:pointer;border:none;background:none;color:inherit;font:inherit;text-align:center;transition:transform .15s}
+.node .slot{width:84px;height:84px;display:grid;place-items:center;transition:background .15s}
+.node .slot .ico{width:52px;height:52px}
+.node b{font-family:var(--f-display);font-size:19px;font-weight:600;line-height:1.15}
+.node:hover,.node.sel{transform:translateY(-4px)}
+.node.sel .slot,.node:hover .slot{background:#A9C77E}
+.arrow{flex:0 0 46px;display:grid;place-items:center;align-self:center;height:84px;margin-top:-38px}
+.arrow i{display:block;width:34px;height:8px;background:repeating-linear-gradient(90deg,#000 0 8px,transparent 8px 12px);background-size:24px 8px;animation:flow 1s linear infinite;position:relative}
+.arrow i::after{content:"";position:absolute;right:-10px;top:-8px;border-left:12px solid #000;border-top:12px solid transparent;border-bottom:12px solid transparent}
+@keyframes flow{to{background-position:24px 0}}
+.info{display:grid;grid-template-columns:auto 1fr;gap:18px;align-items:start;margin-top:22px;padding:22px 24px}
+.info .ico{width:48px;height:48px}
+.info h3{font-size:24px;margin-bottom:6px}
+.info p{color:#D3E2DC;max-width:70ch}
+.money-loop{margin-top:18px;display:flex;align-items:center;gap:12px;font-family:var(--f-mono);font-size:13px;color:var(--gold-2);flex-wrap:wrap}
+.money-loop .ico{width:24px;height:24px}
+.money-loop .line{flex:1 1 120px;height:4px;background:repeating-linear-gradient(270deg,var(--gold) 0 10px,transparent 10px 16px);background-size:32px 4px;animation:flowback 1.2s linear infinite;min-width:60px}
+@keyframes flowback{to{background-position:-32px 0}}
+
+/* currency */
+.cur-grid{display:grid;grid-template-columns:minmax(0,380px) minmax(0,1fr);gap:34px;align-items:start}
+.coin-stage{padding:30px;display:grid;justify-items:center;gap:18px;text-align:center}
+.coin{width:200px;height:200px;cursor:pointer;transition:transform .6s;transform-style:preserve-3d;border:none;background:none;padding:0}
+.coin:hover{transform:rotateY(180deg)}
+.coin svg{width:100%;height:100%;image-rendering:pixelated;filter:drop-shadow(6px 6px 0 rgba(0,0,0,.6))}
+.coin-name{font-family:var(--f-display);font-size:34px;font-weight:700}
+.coin-meta{font-family:var(--f-mono);font-size:12px;color:#444;letter-spacing:.06em}
+.rules{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:18px}
+.rule{padding:20px;display:grid;gap:8px;align-content:start;transition:transform .15s}
+.rule:hover{transform:translateY(-3px)}
+.rule .k{font-family:var(--f-display);font-size:30px;color:var(--gold);line-height:1}
+.rule h3{font-size:19px;font-family:var(--f-body);font-weight:800}
+.rule p{color:var(--muted);font-size:15px}
+.tx-head{margin:46px 0 18px;display:flex;justify-content:space-between;align-items:end;gap:16px;flex-wrap:wrap}
+.tx-head h3{font-size:28px}
+.tx-list{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px}
+.tx{padding:14px;display:flex;gap:12px;align-items:center;cursor:pointer;border:none;font:inherit;text-align:left;color:var(--stone-ink)}
+.tx b{font-family:var(--f-display);font-size:18px;font-weight:600;line-height:1.2}
+.tx[aria-pressed="true"]{background:var(--gold);box-shadow:inset 3px 3px 0 var(--gold-2),inset -3px -3px 0 #A06E14,0 -4px 0 0 #000,0 4px 0 0 #000,-4px 0 0 0 #000,4px 0 0 0 #000}
+.tx-show{margin-top:20px;padding:24px;display:grid;gap:18px}
+.flowline{display:flex;align-items:center;gap:14px;flex-wrap:wrap}
+.party{display:flex;align-items:center;gap:10px;padding:10px 14px;font-weight:700}
+.party .ico{width:30px;height:30px}
+.coinrun{flex:1 1 120px;min-width:80px;height:28px;position:relative;overflow:hidden}
+.coinrun::before{content:"";position:absolute;left:0;right:0;top:12px;height:4px;background:repeating-linear-gradient(90deg,var(--gold) 0 8px,transparent 8px 14px)}
+.coinrun span{position:absolute;top:0;left:0;width:28px;height:28px;animation:run 1.8s linear infinite}
+.coinrun span svg{width:100%;height:100%}
+@keyframes run{from{left:-28px}to{left:100%}}
+.tx-show p{color:#D3E2DC;max-width:75ch}
+.tag{display:inline-block;font-family:var(--f-mono);font-size:11px;letter-spacing:.1em;text-transform:uppercase;padding:3px 8px;border:2px solid currentColor}
+.tag.plan{color:var(--plan)}
+.tag.goal{color:var(--grass-2)}
+.tag.est{color:var(--gold)}
+
+/* city */
+.city-grid{display:grid;grid-template-columns:minmax(0,1fr) 340px;gap:28px;align-items:start}
+.map{position:relative;padding:10px}
+.map-inner{position:relative}
+.map svg{display:block;width:100%;height:auto;image-rendering:pixelated}
+.pin{position:absolute;transform:translate(-50%,-50%);width:30px;height:30px;font-family:var(--f-mono);font-weight:700;font-size:13px;color:var(--stone-ink);background:var(--stone);border:3px solid #000;box-shadow:inset 2px 2px 0 #fff,inset -2px -2px 0 #555;cursor:pointer;display:grid;place-items:center;padding:0;transition:transform .12s}
+.pin:hover{transform:translate(-50%,-50%) scale(1.15)}
+.pin.on{background:var(--gold);box-shadow:inset 2px 2px 0 var(--gold-2),inset -2px -2px 0 #A06E14;transform:translate(-50%,-50%) scale(1.2);z-index:3}
+.map svg .b{transition:filter .15s}
+.map svg .b.on{filter:brightness(1.25) drop-shadow(0 0 6px #F2B53A)}
+.side{display:grid;gap:16px}
+.obj-card{padding:22px;display:grid;gap:10px;min-height:250px;align-content:start}
+.obj-card .row{display:flex;gap:14px;align-items:center}
+.obj-card .ico{width:44px;height:44px}
+.obj-card h3{font-size:24px}
+.obj-card .en{font-family:var(--f-mono);font-size:12px;color:var(--muted);letter-spacing:.06em}
+.obj-card p{color:#D3E2DC;font-size:15.5px}
+.obj-list{display:grid;grid-template-columns:1fr 1fr;gap:6px;padding:12px;max-height:360px;overflow:auto}
+.obj-list button{display:flex;gap:8px;align-items:center;font:inherit;font-size:13px;font-weight:700;text-align:left;padding:6px 8px;border:none;background:transparent;color:var(--stone-ink);cursor:pointer}
+.obj-list button:hover,.obj-list button.on{background:rgba(0,0,0,.12)}
+.obj-list .n{font-family:var(--f-mono);font-size:11px;width:22px;height:22px;display:grid;place-items:center;background:#fff;border:2px solid #000;flex:none}
+.note{font-family:var(--f-mono);font-size:12px;color:var(--muted);margin-top:12px}
+.gallery{display:grid;grid-template-columns:1fr 1fr;gap:20px;margin-top:40px}
+.shot{padding:10px;display:grid;gap:10px}
+.shot img{display:block;width:100%;aspect-ratio:16/9;object-fit:cover;image-rendering:auto}
+.shot figcaption{font-family:var(--f-mono);font-size:12.5px;color:var(--muted);padding:0 4px 4px}
+
+/* industry */
+.ind-grid{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:28px;align-items:stretch}
+.mill-card{padding:30px;display:grid;gap:18px;align-content:start}
+.mill-card .big{display:flex;gap:18px;align-items:center}
+.mill-card .big .ico{width:88px;height:88px}
+.mill-card h3{font-size:34px}
+.mill-card p{color:#D3E2DC}
+.steps{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
+.step{padding:14px 8px;display:grid;justify-items:center;gap:8px;text-align:center;font-weight:800;font-size:14px}
+.step .ico{width:40px;height:40px}
+.va{padding:30px;display:grid;gap:18px;align-content:start}
+.va h3{font-size:28px}
+.va-bars{display:grid;gap:14px}
+.va-row{display:grid;grid-template-columns:150px 1fr;gap:12px;align-items:center}
+.va-row span{font-weight:800;font-size:14px}
+.bar{display:flex;height:34px;border:3px solid #000}
+.bar i{display:block;height:100%}
+.bar .raw{background:#E0C35A url(tex/sand.png);background-size:24px;background-blend-mode:multiply}
+.bar .mill{background:#5DA130 url(tex/grass.png);background-size:24px;background-blend-mode:multiply}
+.bar .trade{background:#3F76E4 url(tex/water.png);background-size:24px;background-blend-mode:multiply}
+.va-key{display:flex;flex-wrap:wrap;gap:14px;font-size:13px;color:#333}
+.va-key i{display:inline-block;width:14px;height:14px;border:2px solid #000;margin-right:6px;vertical-align:-2px}
+
+/* simulator */
+.sim{display:grid;grid-template-columns:260px minmax(0,1fr);gap:26px;align-items:start}
+.sim-pick{padding:16px;display:grid;gap:10px}
+.sim-pick p{font-family:var(--f-mono);font-size:12px;letter-spacing:.06em;color:#333;padding:2px 4px}
+.res{display:flex;gap:12px;align-items:center;padding:10px;border:none;font:inherit;font-weight:800;font-size:16px;color:var(--stone-ink);cursor:pointer;text-align:left;background:var(--stone-mid);box-shadow:inset 3px 3px 0 #373737,inset -3px -3px 0 #fff}
+.res .ico{width:34px;height:34px}
+.res:hover{background:#A2A2A2}
+.res[aria-pressed="true"]{background:#E36F6F;box-shadow:inset 3px 3px 0 #9E3A3A,inset -3px -3px 0 #F6B3B3}
+.sim-out{padding:26px;display:grid;gap:22px}
+.sim-out h3{font-size:28px}
+.casc{display:flex;flex-wrap:wrap;gap:0;align-items:center}
+.cstep{display:flex;align-items:center;gap:10px;padding:12px 14px;background:var(--panel-2);border:3px solid #000;font-weight:700;font-size:15px;opacity:1;transform:none}
+.cstep .ico{width:28px;height:28px}
+.cstep.first{background:#5A2A2A}
+.cstep.anim{animation:pop .45s both}
+@keyframes pop{from{opacity:.15;transform:translateY(8px)}to{opacity:1;transform:none}}
+.carr{width:34px;height:6px;margin:0 6px;background:var(--warn);position:relative}
+.carr::after{content:"";position:absolute;right:-8px;top:-6px;border-left:10px solid var(--warn);border-top:9px solid transparent;border-bottom:9px solid transparent}
+.impact{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px}
+.imp{padding:12px;border:3px solid #000;background:rgba(255,255,255,.04);display:grid;gap:6px}
+.imp b{font-size:14px}
+.meter{display:flex;gap:3px}
+.meter i{flex:1;height:12px;background:#2C4A54;border:2px solid #000}
+.meter i.hit{background:var(--warn)}
+.meter i.mid{background:var(--gold)}
+.shield{padding:18px;border:3px dashed var(--grass-2);display:grid;gap:8px}
+.shield h4{margin:0;font-family:var(--f-display);font-size:20px;color:var(--grass-2);font-weight:600}
+.shield ul{margin:0;padding-left:20px;color:#D3E2DC}
+
+/* problems */
+.prob{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:20px}
+.pcard{padding:22px;display:grid;gap:10px;align-content:start;transition:transform .15s,background .15s}
+.pcard:hover{transform:translateY(-4px);background:var(--panel-2)}
+.pcard .row{display:flex;gap:12px;align-items:center}
+.pcard h3{font-size:21px}
+.pcard p{color:var(--muted);font-size:15px}
+
+/* future */
+.fut{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:20px}
+.fcard{padding:22px;display:grid;gap:10px;align-content:start;border:3px dashed var(--plan);background:repeating-linear-gradient(0deg,rgba(127,179,224,.06) 0 1px,transparent 1px 24px),repeating-linear-gradient(90deg,rgba(127,179,224,.06) 0 1px,transparent 1px 24px),#132B3A;transition:transform .15s,border-color .15s}
+.fcard:hover{transform:translateY(-4px);border-color:#B9D8F4}
+.fcard .row{display:flex;gap:12px;align-items:center;justify-content:space-between}
+.fcard h3{font-size:21px}
+.fcard p{color:var(--muted);font-size:15px}
+.banner{margin-bottom:26px;padding:16px 20px;display:flex;gap:14px;align-items:center;border:3px dashed var(--plan);color:#CFE3F5;font-size:15.5px}
+
+/* dashboard */
+.dash{padding:26px}
+.dash-grid{display:grid;grid-template-columns:repeat(6,1fr);gap:14px}
+.kpi{padding:16px;display:grid;gap:6px;align-content:start;min-width:0}
+.kpi .lbl{font-family:var(--f-mono);font-size:11.5px;letter-spacing:.08em;text-transform:uppercase;color:#333}
+.kpi .val{font-family:var(--f-display);font-size:28px;font-weight:700;line-height:1.1;font-variant-numeric:tabular-nums;color:#111}
+.kpi .sm{font-size:14px;font-weight:700;color:#222}
+.kpi.w2{grid-column:span 2}.kpi.w3{grid-column:span 3}.kpi.w6{grid-column:span 6}
+.res-chips{display:flex;flex-wrap:wrap;gap:8px}
+.res-chips span{display:flex;align-items:center;gap:6px;font-weight:800;font-size:13px;padding:5px 8px;background:#fff;border:2px solid #000}
+.res-chips .ico{width:20px;height:20px}
+.hbars{display:grid;gap:8px}
+.hbar{display:grid;grid-template-columns:130px 1fr 32px;gap:10px;align-items:center;font-size:13px;font-weight:700}
+.hbar .seg{display:flex;gap:2px}
+.hbar .seg i{flex:1;height:14px;background:#7d7d7d;border:2px solid #333}
+.hbar .seg i.f{background:var(--grass)}
+.needs{display:flex;flex-wrap:wrap;gap:8px}
+.needs span{font-weight:800;font-size:13px;padding:6px 10px;background:#fff;border:2px solid #000}
+.dash .foot{font-family:var(--f-mono);font-size:11.5px;color:#333;margin-top:14px}
+
+/* final */
+.final{position:relative;overflow:hidden;border-top:4px solid #000;background:#1d4f9e;padding-block:0}
+.final canvas{position:absolute;inset:0;width:100%;height:100%;display:block}
+.final::after{content:"";position:absolute;inset:0;background:radial-gradient(ellipse at center,rgba(10,22,27,.55),rgba(10,22,27,.88));pointer-events:none}
+.final .wrap{position:relative;z-index:2;padding-block:96px;display:grid;justify-items:center;text-align:center;gap:22px}
+.final h2{font-size:clamp(52px,9vw,110px);color:#fff;text-shadow:5px 5px 0 #000;letter-spacing:.03em}
+.final blockquote{margin:0;font-family:var(--f-display);font-size:clamp(20px,2.6vw,28px);color:var(--gold-2);max-width:30ch}
+.cycle{display:flex;flex-wrap:wrap;justify-content:center;align-items:center;gap:8px;padding:18px;margin-top:10px}
+.cyc{display:flex;align-items:center;gap:8px;padding:8px 12px;font-weight:800;font-size:14px;color:var(--stone-ink)}
+.cyc .ico{width:24px;height:24px}
+.cyc-arr{font-family:var(--f-display);font-size:24px;color:#000}
+.cyc-back{font-family:var(--f-mono);font-size:12px;color:#333;width:100%;text-align:center}
+footer{padding-block:28px;border-top:4px solid #000;background:#0A161B;color:var(--muted);font-size:13.5px}
+footer .wrap{display:flex;flex-wrap:wrap;gap:12px;justify-content:space-between}
+
+
+/* map tools */
+.map-tools{display:flex;flex-wrap:wrap;gap:10px;justify-content:space-between;align-items:center;margin-bottom:10px}
+.layers{display:flex;flex-wrap:wrap;gap:6px}
+.layers button{font:inherit;font-size:12.5px;font-weight:800;padding:6px 10px;cursor:pointer;color:var(--stone-ink);background:#B0B0B0;border:2px solid #000;box-shadow:inset 2px 2px 0 #E2E2E2,inset -2px -2px 0 #6A6A6A;display:flex;align-items:center;gap:6px}
+.layers button i{width:10px;height:10px;border:2px solid #000;display:inline-block}
+.layers button[aria-pressed="true"]{background:var(--gold);box-shadow:inset 2px 2px 0 var(--gold-2),inset -2px -2px 0 #A06E14}
+.zoom{display:flex;gap:6px}
+.zb{width:36px;height:36px;font-family:var(--f-display);font-size:22px;font-weight:700;cursor:pointer;color:var(--stone-ink);background:#B0B0B0;border:2px solid #000;box-shadow:inset 2px 2px 0 #E2E2E2,inset -2px -2px 0 #6A6A6A}
+.zb:hover{background:#C9C9C9}
+.map-view{position:relative;overflow:hidden;border:3px solid #000;background:#1B262B;touch-action:none;cursor:grab;aspect-ratio:1400/900;max-width:100%}
+.map-view.drag{cursor:grabbing}
+.map-stage{position:absolute;left:0;top:0;width:100%;transform-origin:0 0;--z:1;will-change:transform}
+.map-stage.fly{transition:transform .55s cubic-bezier(.2,.8,.2,1)}
+.map-stage .pin{transform:translate(-50%,-50%) scale(calc(1 / var(--z)))}
+.map-stage .pin:hover{transform:translate(-50%,-50%) scale(calc(1.15 / var(--z)))}
+.map-stage .pin.on{transform:translate(-50%,-50%) scale(calc(1.25 / var(--z)))}
+.pin.dim,.map svg .b.dim{opacity:.22}
+.tip{position:absolute;z-index:5;pointer-events:none;font-size:13px;font-weight:800;color:var(--stone-ink);background:#F3EEDC;border:2px solid #000;padding:4px 8px;white-space:nowrap;box-shadow:3px 3px 0 rgba(0,0,0,.5)}
+.map-hint{font-family:var(--f-mono);font-size:11.5px;color:#333;margin:8px 2px 0}
+.gallery .wide{grid-column:1 / -1}
+.gallery .wide img{aspect-ratio:21/8}
+.obj-list .grp{grid-column:1/-1;font-family:var(--f-mono);font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:#444;padding:8px 4px 2px}
+/* energy */
+.en-grid{display:grid;grid-template-columns:minmax(0,1.3fr) minmax(0,1fr);gap:24px;align-items:start}
+.en-main{padding:30px;display:grid;gap:16px}
+.en-main .big{display:flex;gap:18px;align-items:center}
+.en-main .big .ico{width:80px;height:80px}
+.en-main h3{font-size:32px}
+.en-main p{color:#D3E2DC}
+.mini-chain{display:flex;flex-wrap:wrap;align-items:center;gap:8px}
+.mini-chain .step{display:flex;align-items:center;gap:8px;padding:8px 12px;font-weight:800;font-size:14px}
+.mini-chain .step .ico{width:26px;height:26px}
+.mc-arr{font-family:var(--f-display);font-size:22px;color:var(--gold)}
+.en-side{display:grid;gap:12px}
+.en-card{display:flex;gap:14px;align-items:center;padding:16px;border:none;font:inherit;text-align:left;color:var(--text);cursor:pointer;transition:transform .15s,background .15s}
+.en-card:hover{transform:translateX(4px);background:var(--panel-2)}
+.en-card .ico{width:40px;height:40px}
+.en-card b{display:block;font-family:var(--f-display);font-size:20px;font-weight:600}
+.en-card span span{color:var(--muted);font-size:14.5px}
+.gb{margin-top:34px;padding:28px;display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.1fr);gap:28px;align-items:center}
+.gb-text{display:grid;gap:12px}
+.gb-text h3{font-size:30px}
+.gb-label{font-weight:800;font-size:15px}
+#gbRange{width:100%;accent-color:#5DA130;height:28px}
+.gb-out{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.gb-out .slot{padding:12px;display:grid;gap:2px}
+.gb-out .slot span{font-family:var(--f-mono);font-size:11px;letter-spacing:.06em;text-transform:uppercase;color:#222}
+.gb-out .slot b{font-family:var(--f-display);font-size:26px;color:#111}
+.gb-out .wide{grid-column:1/-1;font-size:14.5px;font-weight:700;padding:12px;background:#fff;border:2px solid #000}
+.gb-chart svg{display:block;width:100%;height:auto;background:#F3EEDC;border:3px solid #000}
+/* quiz */
+.quiz{display:grid;gap:16px}
+.q{padding:22px;display:grid;gap:12px}
+.q h3{font-size:21px;font-family:var(--f-body);font-weight:800}
+.q .opts{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:8px}
+.q .opt{font:inherit;font-size:15px;font-weight:700;text-align:left;padding:12px 14px;cursor:pointer;color:var(--stone-ink);background:var(--stone);border:3px solid #000;box-shadow:inset 3px 3px 0 #fff,inset -3px -3px 0 #555}
+.q .opt:hover:not([disabled]){background:#D8D8D8}
+.q .opt.ok{background:#8FD14F;box-shadow:inset 3px 3px 0 #C6EC9C,inset -3px -3px 0 #3A7019}
+.q .opt.bad{background:#E36F6F;box-shadow:inset 3px 3px 0 #F6B3B3,inset -3px -3px 0 #9E3A3A}
+.q .opt[disabled]{cursor:default}
+.q .why{color:#D3E2DC;font-size:15px}
+.score{padding:18px 22px;display:flex;justify-content:space-between;align-items:center;gap:14px;flex-wrap:wrap}
+.score b{font-family:var(--f-display);font-size:28px}
+@media (max-width:980px){.en-grid,.gb{grid-template-columns:minmax(0,1fr)}}
+@media (max-width:680px){.gallery .wide img{aspect-ratio:16/9}.gb-out{grid-template-columns:1fr}}
+
+/* responsive */
+@media (max-width:980px){
+  .cur-grid,.city-grid,.ind-grid,.sim{grid-template-columns:minmax(0,1fr)}
+  .dash-grid{grid-template-columns:repeat(2,1fr)}
+  .kpi.w2,.kpi.w3,.kpi.w6{grid-column:span 2}
+  .side{grid-template-columns:1fr 1fr}
+}
+@media (max-width:680px){
+  section{padding-block:60px}
+  .hero::after{background:linear-gradient(180deg,rgba(10,22,27,.86),rgba(10,22,27,.72))}
+  .chain{flex-direction:column;align-items:stretch;padding:18px}
+  .node{grid-template-columns:auto 1fr;justify-items:start;text-align:left;align-items:center}
+  .node .slot{width:64px;height:64px}.node .slot .ico{width:40px;height:40px}
+  .arrow{height:30px;margin:0;transform:rotate(90deg);align-self:flex-start;margin-left:24px}
+  .side{grid-template-columns:1fr}
+  .gallery{grid-template-columns:1fr}
+  .steps{grid-template-columns:repeat(2,1fr)}
+  .va-row{grid-template-columns:1fr}
+  .obj-list{grid-template-columns:1fr}
+  .pin{width:24px;height:24px;font-size:11px}
+  .hbar{grid-template-columns:100px 1fr 28px}
+  .casc{flex-direction:column;align-items:stretch}
+  .carr{width:6px;height:22px;margin:4px 0 4px 24px}
+  .carr::after{right:-6px;top:auto;bottom:-9px;border-left:9px solid transparent;border-right:9px solid transparent;border-top:10px solid var(--warn);border-bottom:0}
+}
+@media (prefers-reduced-motion:reduce){
+  *{animation:none!important;transition:none!important}
+  html{scroll-behavior:auto}
+}
+
+/* readability: pixel face only at display sizes, crisp Minecraft-style shadow; small headings and UI in the body face */
+body{font-size:17px;line-height:1.65}
+h1,h2{letter-spacing:.02em;text-shadow:3px 3px 0 rgba(0,0,0,.55)}
+h2{font-weight:600}
+.sec-head h2{font-size:clamp(34px,5vw,52px);line-height:1.12}
+.hero .sub,.final blockquote{letter-spacing:.02em;text-shadow:2px 2px 0 rgba(0,0,0,.6)}
+.info h3,.obj-card h3,.pcard h3,.fcard h3,.en-card b,.tx b,.node b,.va h3,.gb-text h3,.tx-head h3,.sim-out h3,.shield h4,.rule h3{font-family:var(--f-body);font-weight:800;letter-spacing:0;text-shadow:none;line-height:1.25}
+.info h3,.obj-card h3{font-size:23px}
+.pcard h3,.fcard h3{font-size:19px}
+.node b{font-size:17px}
+.tx b{font-size:16px}
+.en-card b{font-size:18px}
+.va h3,.gb-text h3,.tx-head h3,.sim-out h3{font-size:26px}
+.shield h4{font-size:18px}
+.tab{font-family:var(--f-body);font-weight:800;font-size:16px}
+.btn{font-weight:600;letter-spacing:.03em;font-size:20px}
+.kpi .val{font-weight:600;letter-spacing:.02em}
+.kpi .val[style*="22px"]{font-family:var(--f-body);font-weight:800;font-size:21px!important;letter-spacing:0}
+.mill-card h3,.en-main h3{font-weight:600;letter-spacing:.02em}
+.rule .k,.chip b,.coin-name,.gb-out .slot b,.score b{font-weight:600;letter-spacing:.02em}
+.step,.cyc,.party,.res,.cstep,.imp b,.obj-list button,.layers button{font-family:var(--f-body)}
+.lead,.info p,.obj-card p,.tx-show p,.pcard p,.fcard p{font-size:16.5px}
+.eyebrow{font-size:12.5px;letter-spacing:.12em}
+</style>
+</head>
+<body>
+
+
+<header class="top">
+  <div class="wrap">
+    <a class="brand" href="#top"><span class="ico" data-ico="coin"></span><span>NOVA TERRA<small>ЭКОНОМИЧЕСКИЙ ПОРТАЛ</small></span></a>
+    <nav class="nav" id="nav" aria-label="Разделы">
+      <a href="#economy">Экономика</a>
+      <a href="#currency">Валюта</a>
+      <a href="#city">Город</a>
+      <a href="#industry">Промышленность</a>
+      <a href="#energy">Энергия и оборона</a>
+      <a href="#sim">Симулятор</a>
+      <a href="#problems">Проблемы</a>
+      <a href="#future">Будущее</a>
+      <a href="#dashboard">Показатели</a>
+      <a href="#quiz">Тест</a>
+    </nav>
+  </div>
+</header>
+
+<main id="top">
+<!-- 1 HERO -->
+<section class="hero" style="padding-block:0" aria-label="Nova Terra">
+  <canvas id="heroIsland" aria-hidden="true"></canvas>
+  <div class="wrap">
+    <p class="eyebrow">Официальный экономический портал · Остров Nova Terra</p>
+    <h1>NOVA TERRA</h1>
+    <p class="sub">Изолированная экономика острова</p>
+    <div class="hero-stats">
+      <div class="chip gui"><span class="ico" data-ico="people"></span><div><b>750</b><span>жителей</span></div></div>
+      <div class="chip gui"><span class="ico" data-ico="coin"></span><div><b>Terra Coin</b><span>собственная валюта острова</span></div></div>
+      <div class="chip gui"><span class="ico" data-ico="npp"></span><div><b>2 АЭС</b><span>своя энергия</span></div></div>
+    </div>
+    <p class="desc">Nova Terra — изолированный остров, который самостоятельно организует производство, распределение и потребление ресурсов, чтобы минимизировать зависимость от внешнего мира.</p>
+    <div class="hero-cta">
+      <a class="btn grass" href="#economy">Исследовать экономику</a>
+      <a class="btn" href="#city">Посмотреть город</a>
+    </div>
+  </div>
+</section>
+<div class="strip"></div>
+
+<!-- 2 ECONOMY -->
+<section id="economy">
+  <div class="wrap">
+    <div class="sec-head">
+      <p class="eyebrow">Экономика острова</p>
+      <h2>Как ресурсы становятся жизнью города</h2>
+      <p class="lead">Каждая цепочка показывает, как ресурс острова проходит путь до жителей. Наведите курсор или нажмите на звено, чтобы увидеть его роль в экономике.</p>
+    </div>
+    <div class="tabs" role="tablist" aria-label="Цепочки">
+      <button class="tab" role="tab" aria-selected="true" data-chain="food"><span class="ico" data-ico="wheat"></span>Продовольствие</button>
+      <button class="tab" role="tab" aria-selected="false" data-chain="build"><span class="ico" data-ico="pickaxe"></span>Строительство</button>
+      <button class="tab" role="tab" aria-selected="false" data-chain="water"><span class="ico" data-ico="drop"></span>Вода</button>
+      <button class="tab" role="tab" aria-selected="false" data-chain="energy"><span class="ico" data-ico="bolt"></span>Энергия</button>
+      <button class="tab" role="tab" aria-selected="false" data-chain="fuel"><span class="ico" data-ico="oil"></span>Топливо</button>
+    </div>
+    <div class="px chain" id="chain"></div>
+    <div class="px info" id="chainInfo" aria-live="polite"></div>
+    <div class="money-loop" id="moneyLoop"><span class="ico" data-ico="coin"></span><span>Жители</span><span class="line"></span><span>Terra Coin возвращаются в экономику через покупки, а зарплаты снова приходят к жителям</span></div>
+  </div>
+</section>
+<div class="strip stone"></div>
+
+<!-- 3 CURRENCY -->
+<section id="currency">
+  <div class="wrap">
+    <div class="sec-head">
+      <p class="eyebrow">Наша валюта</p>
+      <h2>Terra Coin</h2>
+      <p class="lead">Собственные деньги острова. Правила Terra Coin защищают цены от резкого роста, а сбережения и зарплаты жителей — от обесценивания.</p>
+    </div>
+    <div class="cur-grid">
+      <div class="gui coin-stage">
+        <button class="coin" aria-label="Монета Terra Coin" data-ico-big="coin"></button>
+        <div class="coin-name">Terra Coin</div>
+        <div class="coin-meta">Знак на монете — буква «T»</div>
+      </div>
+      <div class="rules">
+        <div class="px rule"><div class="k">1 кг</div><h3>Обеспечена зерном</h3><p>Каждую монету можно обменять на 1 кг зерна из общего запаса острова.</p></div>
+        <div class="px rule"><div class="k">Банк</div><h3>Независимый Банк острова</h3><p>Совет не может печатать монеты, чтобы оплачивать свои расходы.</p></div>
+        <div class="px rule"><div class="k">+ товары</div><h3>Деньги растут вместе с товарами</h3><p>Новые монеты выпускаются, только когда остров производит больше.</p></div>
+        <div class="px rule"><div class="k">≤ 2%</div><h3>Цель по инфляции в год</h3><p>Каждый месяц проверяется цена базовой корзины товаров. <span class="tag goal">цель</span></p></div>
+        <div class="px rule"><div class="k">100%</div><h3>Зарплаты растут с ценами</h3><p>Если корзина дорожает, зарплаты повышаются, и покупательная способность сохраняется.</p></div>
+        <div class="px rule"><div class="k">3% / 5%</div><h3>Вклады и кредиты</h3><p>Вклады приносят 3% в год, кредиты на лодки и инструменты стоят 5%. Каждая пятая монета остаётся в хранилище.</p></div>
+      </div>
+    </div>
+
+    <div class="tx-head"><h3>Terra Coin в жизни города</h3><p class="eyebrow" style="color:var(--muted)">Выберите операцию</p></div>
+    <div class="tx-list" id="txList"></div>
+    <div class="px tx-show" id="txShow" aria-live="polite"></div>
+  </div>
+</section>
+<div class="strip planks"></div>
+
+<!-- 4 CITY -->
+<section id="city">
+  <div class="wrap">
+    <div class="sec-head">
+      <p class="eyebrow">Город</p>
+      <h2>Карта острова Nova Terra</h2>
+      <p class="lead">Нажмите на номер на карте или на объект в списке, и карта приблизится к нему. Слои помогают увидеть отдельные части экономики. Тёмные клетки по краям — участки, которые ещё не прогружены: карта будет расти вместе с островом.</p>
+    </div>
+    <div class="city-grid">
+      <div class="gui map">
+        <div class="map-tools"><div class="layers" id="layers" role="group" aria-label="Слои карты"></div><div class="zoom"><button class="zb" id="zIn" aria-label="Приблизить">+</button><button class="zb" id="zOut" aria-label="Отдалить">−</button><button class="zb" id="zReset" aria-label="Показать всю карту">⤢</button></div></div>
+        <div class="map-view" id="mapView"><div class="tip" id="mapTip" hidden></div>
+        <div class="map-inner map-stage" id="mapInner">
+          <svg viewBox="0 0 1400 900" role="img" aria-label="Схема острова Nova Terra сверху: город, энергетическая зона с двумя АЭС и военной базой, ресурсная зона с угольной и нефтяной вышками и хранилищем, вокруг — непрогруженные участки" id="citySvg">
+            <defs>
+              <pattern id="pw" width="20" height="20" patternUnits="userSpaceOnUse"><rect width="20" height="20" fill="#7A5230"/><rect width="20" height="12" fill="#E0C35A"/><rect x="4" y="2" width="4" height="8" fill="#C9A63E"/><rect x="14" y="4" width="3" height="6" fill="#C9A63E"/></pattern>
+              <pattern id="pc" width="20" height="20" patternUnits="userSpaceOnUse"><rect width="20" height="20" fill="#7A5230"/><rect width="20" height="12" fill="#8FCB4A"/><rect x="12" y="4" width="6" height="6" fill="#E8913A"/></pattern>
+              <pattern id="gr" width="40" height="40" patternUnits="userSpaceOnUse"><rect width="40" height="40" fill="#5DA130"/><rect x="6" y="8" width="8" height="8" fill="#6DB83A"/><rect x="26" y="24" width="8" height="8" fill="#55962C"/></pattern>
+              <pattern id="fog" width="64" height="64" patternUnits="userSpaceOnUse"><rect width="64" height="64" fill="#1B262B"/><rect width="64" height="2" fill="#24333B"/><rect width="2" height="64" fill="#24333B"/><rect x="22" y="24" width="8" height="8" fill="#1F2C32"/><rect x="44" y="40" width="6" height="6" fill="#202E35"/></pattern>
+              <pattern id="st" width="20" height="20" patternUnits="userSpaceOnUse"><rect width="20" height="20" fill="#8A8A86"/><rect x="2" y="3" width="6" height="6" fill="#6E6E6A"/><rect x="12" y="11" width="6" height="6" fill="#9E9E9A"/></pattern>
+            </defs>
+            <rect width="1400" height="900" fill="url(#fog)"/>
+            <g font-family="JetBrains Mono, monospace" font-size="17" fill="#55707A" letter-spacing="2"><text x="40" y="130">НЕ ПРОГРУЖЕНО</text><text x="1250" y="120">НЕ</text><text x="1250" y="144">ПРОГРУЖЕНО</text><text x="40" y="892" font-size="13">НЕ ПРОГРУЖЕНО</text></g>
+            <rect x="330" y="0" width="900" height="232" fill="url(#gr)"/>
+            <rect x="0" y="250" width="332" height="620" fill="url(#gr)"/>
+            <rect x="630" y="0" width="30" height="232" fill="#3A3A3A"/>
+            <g class="b" data-id="npp"><rect x="360" y="24" width="240" height="190" fill="#2A2622"/><rect x="364" y="28" width="232" height="182" fill="#8E8A80"/><g fill="#5E5B55"><rect x="392" y="40" width="64" height="104"/><rect x="376" y="56" width="96" height="72"/><rect x="384" y="48" width="80" height="88"/><rect x="500" y="40" width="64" height="104"/><rect x="484" y="56" width="96" height="72"/><rect x="492" y="48" width="80" height="88"/></g><g fill="#F3F3F0"><rect x="404" y="62" width="40" height="60"/><rect x="394" y="72" width="60" height="40"/><rect x="512" y="62" width="40" height="60"/><rect x="502" y="72" width="60" height="40"/></g><rect x="380" y="152" width="200" height="50" fill="#3A3A3A"/><g fill="#6E6E6A"><rect x="388" y="160" width="184" height="6"/><rect x="388" y="176" width="184" height="6"/><rect x="388" y="192" width="184" height="6"/></g><rect x="560" y="156" width="14" height="10" fill="#F2B53A"/></g>
+            <g class="b" data-id="npp"><rect x="670" y="24" width="240" height="190" fill="#2A2622"/><rect x="674" y="28" width="232" height="182" fill="#8E8A80"/><g fill="#5E5B55"><rect x="702" y="40" width="64" height="104"/><rect x="686" y="56" width="96" height="72"/><rect x="694" y="48" width="80" height="88"/><rect x="810" y="40" width="64" height="104"/><rect x="794" y="56" width="96" height="72"/><rect x="802" y="48" width="80" height="88"/></g><g fill="#F3F3F0"><rect x="714" y="62" width="40" height="60"/><rect x="704" y="72" width="60" height="40"/><rect x="822" y="62" width="40" height="60"/><rect x="812" y="72" width="60" height="40"/></g><rect x="690" y="152" width="200" height="50" fill="#3A3A3A"/><g fill="#6E6E6A"><rect x="698" y="160" width="184" height="6"/><rect x="698" y="176" width="184" height="6"/><rect x="698" y="192" width="184" height="6"/></g><rect x="870" y="156" width="14" height="10" fill="#F2B53A"/></g>
+            <g class="b" data-id="military"><rect x="924" y="20" width="190" height="196" fill="#2A2622"/><rect x="930" y="26" width="178" height="184" fill="#8B8B6A"/><g fill="#556B2F"><rect x="944" y="40" width="64" height="40"/><rect x="1020" y="40" width="74" height="40"/><rect x="1030" y="132" width="26" height="18"/><rect x="1064" y="132" width="26" height="18"/></g><rect x="944" y="104" width="64" height="64" fill="#4A4A4A"/><g fill="#F2B53A"><rect x="960" y="118" width="8" height="36"/><rect x="984" y="118" width="8" height="36"/><rect x="968" y="132" width="16" height="8"/></g><g fill="#6B4A2B"><rect x="924" y="20" width="18" height="18"/><rect x="1096" y="20" width="18" height="18"/><rect x="924" y="198" width="18" height="18"/><rect x="1096" y="198" width="18" height="18"/></g><rect x="1074" y="166" width="4" height="30" fill="#2A2622"/><rect x="1078" y="166" width="20" height="12" fill="#C8423A"/></g>
+            <g class="b" data-id="fields"><rect x="1124" y="8" width="102" height="216" fill="url(#pw)"/></g>
+            <rect x="20" y="446" width="312" height="14" fill="#8B6A43"/>
+            <g class="b" data-id="coal"><rect x="20" y="266" width="160" height="168" fill="#2A2622"/><rect x="24" y="270" width="152" height="160" fill="#5E5E5A"/><g fill="#2A2622"><rect x="58" y="284" width="8" height="120"/><rect x="110" y="284" width="8" height="120"/><rect x="58" y="296" width="60" height="6"/><rect x="58" y="336" width="60" height="6"/><rect x="58" y="376" width="60" height="6"/><rect x="80" y="276" width="16" height="10"/></g><rect x="66" y="404" width="96" height="10" fill="#8A8A86"/><rect x="126" y="356" width="44" height="44" fill="#1C1C1C"/><g fill="#4A4A4A"><rect x="134" y="364" width="6" height="6"/><rect x="152" y="380" width="6" height="6"/></g></g>
+            <g class="b" data-id="oil"><rect x="20" y="474" width="160" height="172" fill="#2A2622"/><rect x="24" y="478" width="152" height="164" fill="#A8977A"/><rect x="40" y="580" width="90" height="12" fill="#2A2622"/><rect x="80" y="530" width="10" height="50" fill="#2A2622"/><rect x="36" y="518" width="110" height="14" fill="#C8423A"/><rect x="138" y="508" width="22" height="36" fill="#2A2622"/><rect x="150" y="544" width="4" height="48" fill="#2A2622"/><g fill="#2E2E2E"><rect x="36" y="604" width="24" height="30"/><rect x="66" y="604" width="24" height="30"/><rect x="96" y="604" width="24" height="30"/></g><g fill="#4A4A4A"><rect x="36" y="604" width="24" height="6"/><rect x="66" y="604" width="24" height="6"/><rect x="96" y="604" width="24" height="6"/></g><rect x="128" y="600" width="40" height="30" fill="#111111"/></g>
+            <g class="b" data-id="storage"><rect x="186" y="616" width="140" height="232" fill="#2A2622"/><rect x="190" y="620" width="132" height="224" fill="#B8B4AA"/><rect x="194" y="624" width="124" height="140" fill="#A0703A"/><g fill="#7A5230"><rect x="194" y="656" width="124" height="6"/><rect x="194" y="690" width="124" height="6"/><rect x="194" y="724" width="124" height="6"/></g><g fill="#C9A26B"><rect x="198" y="782" width="30" height="30"/><rect x="234" y="782" width="30" height="30"/><rect x="216" y="752" width="0" height="0"/><rect x="270" y="782" width="30" height="30"/></g><g fill="#7A5230"><rect x="198" y="795" width="30" height="4"/><rect x="234" y="795" width="30" height="4"/><rect x="270" y="795" width="30" height="4"/></g><g fill="#2E2E2E"><rect x="200" y="818" width="18" height="22"/><rect x="224" y="818" width="18" height="22"/><rect x="300" y="784" width="16" height="22"/></g></g>
+            <g transform="translate(330,230)">
+            <rect width="1040" height="640" fill="url(#gr)"/>
+            <g class="b" data-id="res"><rect x="16" y="16" width="278" height="128" fill="#8A8A86"/><rect x="28" y="28" width="254" height="104" fill="#3F76E4"/><rect x="60" y="56" width="40" height="6" fill="#9CC0F5"/><rect x="190" y="90" width="60" height="6" fill="#9CC0F5"/><rect x="16" y="560" width="134" height="68" fill="#8A8A86"/><rect x="26" y="570" width="114" height="48" fill="#3F76E4"/><rect x="50" y="586" width="40" height="6" fill="#9CC0F5"/></g>
+            <g class="b" data-id="fields"><rect x="10" y="160" width="134" height="120" fill="url(#pw)"/><rect x="160" y="160" width="134" height="120" fill="url(#pc)"/><rect x="10" y="296" width="134" height="120" fill="url(#pc)"/><rect x="160" y="296" width="134" height="120" fill="url(#pw)"/><rect x="144" y="144" width="16" height="272" fill="#3F76E4"/><rect x="10" y="280" width="284" height="16" fill="#3F76E4"/></g>
+            <g class="b" data-id="mill"><rect x="16" y="430" width="134" height="114" fill="#2A2622"/><rect x="20" y="434" width="126" height="106" fill="#A0703A"/><rect x="28" y="442" width="110" height="34" fill="#C9A26B"/><rect x="40" y="490" width="20" height="50" fill="#5E3E22"/><rect x="78" y="490" width="60" height="30" fill="#E8E2D2"/><rect x="100" y="452" width="10" height="14" fill="#5E3E22"/></g>
+            <g class="b" data-id="mines"><rect x="164" y="430" width="130" height="196" fill="url(#st)"/><rect x="164" y="430" width="130" height="8" fill="#5E5E5A"/><rect x="200" y="500" width="56" height="48" fill="#1C1C1C"/><rect x="210" y="548" width="6" height="78" fill="#7A5230"/><rect x="240" y="548" width="6" height="78" fill="#7A5230"/><rect x="186" y="456" width="10" height="10" fill="#F2B53A"/><rect x="262" y="470" width="10" height="10" fill="#9CC0F5"/><rect x="272" y="580" width="10" height="10" fill="#F2B53A"/></g>
+            <rect x="300" y="0" width="30" height="640" fill="#3A3A3A"/>
+            <g class="b" data-id="apart"><rect x="346" y="16" width="308" height="78" fill="#2A2622"/><rect x="350" y="20" width="300" height="70" fill="#CBBE9A"/><rect x="360" y="30" width="280" height="50" fill="#B5AC95"/><rect x="380" y="42" width="16" height="16" fill="#8F8878"/><rect x="500" y="50" width="16" height="16" fill="#8F8878"/><rect x="610" y="42" width="16" height="16" fill="#8F8878"/></g>
+            <g class="b" data-id="houses"><rect x="670" y="16" width="64" height="78" fill="#2E2E2E"/><rect x="670" y="34" width="64" height="6" fill="#4E4E4E"/><rect x="670" y="58" width="64" height="6" fill="#4E4E4E"/><rect x="744" y="16" width="76" height="78" fill="#8B3A2B"/><rect x="744" y="40" width="76" height="6" fill="#6E2A20"/><rect x="744" y="66" width="76" height="6" fill="#6E2A20"/></g>
+            <rect x="330" y="104" width="510" height="44" fill="#6E6E6A"/>
+            <g fill="#F3EEDC"><rect x="360" y="124" width="20" height="4"/><rect x="420" y="124" width="20" height="4"/><rect x="480" y="124" width="20" height="4"/><rect x="540" y="124" width="20" height="4"/><rect x="600" y="124" width="20" height="4"/><rect x="660" y="124" width="20" height="4"/><rect x="720" y="124" width="20" height="4"/><rect x="780" y="124" width="20" height="4"/></g>
+            <g class="b" data-id="hall"><rect x="356" y="166" width="178" height="118" fill="#2A2622"/><rect x="360" y="170" width="170" height="110" fill="#E2D2A6"/><rect x="378" y="182" width="134" height="58" fill="#F0E6C8"/><g fill="#4A4A4A"><rect x="392" y="192" width="24" height="18"/><rect x="424" y="192" width="24" height="18"/><rect x="456" y="192" width="24" height="18"/><rect x="392" y="216" width="24" height="18"/><rect x="424" y="216" width="24" height="18"/><rect x="456" y="216" width="24" height="18"/></g><rect x="360" y="254" width="170" height="26" fill="#C9B88C"/></g>
+            <g class="b" data-id="ministers"><rect x="552" y="166" width="168" height="108" fill="#2A2622"/><rect x="556" y="170" width="160" height="100" fill="#D8D2C4"/><rect x="566" y="178" width="140" height="40" fill="#C2BBAA"/><g fill="#A8A090"><rect x="570" y="232" width="8" height="32"/><rect x="592" y="232" width="8" height="32"/><rect x="614" y="232" width="8" height="32"/><rect x="636" y="232" width="8" height="32"/><rect x="658" y="232" width="8" height="32"/><rect x="680" y="232" width="8" height="32"/></g><rect x="630" y="184" width="10" height="26" fill="#2A2622"/><rect x="640" y="184" width="22" height="13" fill="#C8423A"/></g>
+            <g class="b" data-id="shops"><rect x="736" y="156" width="88" height="128" fill="#2A2622"/><rect x="740" y="160" width="80" height="120" fill="#F3EEDC"/><g fill="#C8423A"><rect x="740" y="170" width="80" height="10"/><rect x="740" y="194" width="80" height="10"/><rect x="740" y="218" width="80" height="10"/><rect x="740" y="242" width="80" height="10"/></g></g>
+            <g class="b" data-id="clinic"><rect x="566" y="306" width="112" height="86" fill="#2A2622"/><rect x="570" y="310" width="104" height="78" fill="#F3F3F0"/><g fill="#3FC1D9"><rect x="590" y="332" width="26" height="8"/><rect x="599" y="323" width="8" height="26"/><rect x="630" y="356" width="26" height="8"/><rect x="639" y="347" width="8" height="26"/></g></g>
+            <g class="b" data-id="police"><rect x="696" y="306" width="128" height="86" fill="#2A2622"/><rect x="700" y="310" width="120" height="78" fill="#DAD5C8"/><rect x="700" y="310" width="120" height="22" fill="#2E4FA0"/><rect x="706" y="316" width="16" height="10" fill="#E36F6F"/><rect x="726" y="316" width="16" height="10" fill="#9CC0F5"/><rect x="740" y="344" width="40" height="30" fill="#4A6A80"/></g>
+            <g class="b" data-id="market"><rect x="376" y="456" width="178" height="108" fill="#2A2622"/><rect x="380" y="460" width="170" height="100" fill="#C9A26B"/><g fill="#C8423A"><rect x="388" y="468" width="34" height="34"/><rect x="458" y="468" width="34" height="34"/></g><g fill="#F3EEDC"><rect x="423" y="468" width="34" height="34"/><rect x="493" y="468" width="34" height="34"/></g><rect x="390" y="516" width="150" height="36" fill="#A0703A"/><rect x="400" y="524" width="16" height="16" fill="#E0C35A"/><rect x="430" y="524" width="16" height="16" fill="#8FCB4A"/><rect x="460" y="524" width="16" height="16" fill="#E8913A"/><rect x="490" y="524" width="16" height="16" fill="#E8E2D2"/></g>
+            <g class="b" data-id="road"><rect x="840" y="0" width="40" height="640" fill="#3A3A3A"/><g fill="#F3EEDC"><rect x="858" y="20" width="4" height="22"/><rect x="858" y="80" width="4" height="22"/><rect x="858" y="140" width="4" height="22"/><rect x="858" y="200" width="4" height="22"/><rect x="858" y="260" width="4" height="22"/><rect x="858" y="320" width="4" height="22"/><rect x="858" y="380" width="4" height="22"/><rect x="858" y="440" width="4" height="22"/><rect x="858" y="500" width="4" height="22"/><rect x="858" y="560" width="4" height="22"/></g></g>
+            <rect x="880" y="0" width="160" height="640" fill="#B8B4AA"/>
+            <g class="b" data-id="tower"><rect x="890" y="16" width="136" height="180" fill="#2A2622"/><rect x="894" y="20" width="128" height="172" fill="#EDE7DA"/><rect x="906" y="32" width="104" height="80" fill="#9A958A"/><g fill="#6E6A60"><rect x="916" y="42" width="12" height="12"/><rect x="934" y="42" width="12" height="12"/><rect x="916" y="60" width="12" height="12"/><rect x="934" y="60" width="12" height="12"/><rect x="984" y="84" width="18" height="18"/></g><rect x="894" y="150" width="128" height="42" fill="#8B4A2B"/></g>
+            <g class="b" data-id="offices"><rect x="890" y="206" width="136" height="128" fill="#2A2622"/><rect x="894" y="210" width="128" height="120" fill="#DAD5C8"/><rect x="908" y="224" width="70" height="56" fill="#4A6A80"/><rect x="988" y="226" width="22" height="40" fill="#3E8A2A"/><rect x="908" y="294" width="100" height="10" fill="#3E8A2A"/></g>
+            <g class="b" data-id="gardens"><rect x="890" y="346" width="136" height="282" fill="#DAD5C8"/><g fill="#3E8A2A"><rect x="904" y="360" width="108" height="14"/><rect x="904" y="392" width="46" height="46"/><rect x="966" y="392" width="46" height="46"/><rect x="904" y="456" width="108" height="14"/><rect x="904" y="490" width="46" height="46"/><rect x="966" y="490" width="46" height="46"/><rect x="904" y="556" width="108" height="14"/><rect x="904" y="590" width="108" height="14"/></g><g fill="#F2B53A"><rect x="920" y="404" width="8" height="8"/><rect x="984" y="504" width="8" height="8"/></g><g fill="#E36F6F"><rect x="990" y="410" width="8" height="8"/><rect x="926" y="514" width="8" height="8"/></g></g>
+            <g fill="#2F6B1E"><rect x="600" y="430" width="30" height="30"/><rect x="700" y="470" width="30" height="30"/><rect x="620" y="560" width="30" height="30"/><rect x="760" y="560" width="30" height="30"/></g>
+          </g>
+          </svg>
+        </div></div>
+        <p class="map-hint">Перетаскивайте карту · кнопки или Ctrl + колесо — масштаб · двойной клик — приблизить</p>
+      </div>
+      <div class="side">
+        <div class="px obj-card" id="objCard" aria-live="polite"></div>
+        <div class="gui obj-list" id="objList"></div>
+      </div>
+    </div>
+    <p class="note">Схема упрощена: она показывает, какие объекты есть на острове и как они связаны, а не точное расположение построек в Minecraft.</p>
+
+    <div class="gallery">
+      <figure class="px shot" style="margin:0"><img src="img/town-1.jpg" alt="Вид сверху на город Nova Terra в Minecraft: высотная башня, офисы, дома, дорога, зелёные газоны и песчаный берег" loading="lazy"><figcaption>Minecraft-проект · вид на башню и центр города</figcaption></figure>
+      <figure class="px shot" style="margin:0"><img src="img/town-2.jpg" alt="Вид сверху на город Nova Terra в Minecraft: жилой дом, улица с парковкой, площадь с ратушей, клиника и рынок" loading="lazy"><figcaption>Minecraft-проект · площадь, жилой квартал и рынок</figcaption></figure>
+      <figure class="px shot wide" style="margin:0"><img src="img/town-3.jpg" alt="Две атомные электростанции Nova Terra в Minecraft с градирнями, рядом пшеничное поле и лес" loading="lazy"><figcaption>Minecraft-проект · две АЭС за полями</figcaption></figure>
+    </div>
+  </div>
+</section>
+<div class="strip"></div>
+
+<!-- 5 INDUSTRY -->
+<section id="industry">
+  <div class="wrap">
+    <div class="sec-head">
+      <p class="eyebrow">Промышленность</p>
+      <h2>Мукомольный завод — сердце производства</h2>
+      <p class="lead">Мукомольный завод позволяет острову перерабатывать собственное сельскохозяйственное сырьё вместо того, чтобы зависеть от готовых продуктов извне.</p>
+    </div>
+    <div class="ind-grid">
+      <div class="px mill-card">
+        <div class="big"><span class="ico" data-ico="mill"></span><div><p class="eyebrow">Главный промышленный объект</p><h3>Flour Mill</h3></div></div>
+        <p>Пшеница с полей Nova Terra поступает на завод, превращается в муку и уходит на рынок. Так остров получает продукты, рабочие места и доход, не выходя за пределы своих ресурсов.</p>
+        <div class="steps">
+          <div class="gui step"><span class="ico" data-ico="wheat"></span>Пшеница</div>
+          <div class="gui step"><span class="ico" data-ico="flour"></span>Мука</div>
+          <div class="gui step"><span class="ico" data-ico="market"></span>Рынок</div>
+          <div class="gui step"><span class="ico" data-ico="people"></span>Жители</div>
+        </div>
+      </div>
+      <div class="gui va">
+        <p class="eyebrow" style="color:#7A5230">Ключевое понятие</p>
+        <h3>Добавленная стоимость</h3>
+        <p>Мука стоит дороже пшеницы, из которой её сделали. Разница — это добавленная стоимость: труд работников, работа мельницы и доставка на рынок. Именно она превращается в зарплаты и доход острова.</p>
+        <div class="va-bars" aria-label="Условная схема роста стоимости">
+          <div class="va-row"><span>Пшеница с поля</span><div class="bar"><i class="raw" style="width:40%"></i></div></div>
+          <div class="va-row"><span>Мука с завода</span><div class="bar"><i class="raw" style="width:40%"></i><i class="mill" style="width:30%"></i></div></div>
+          <div class="va-row"><span>Товар на рынке</span><div class="bar"><i class="raw" style="width:40%"></i><i class="mill" style="width:30%"></i><i class="trade" style="width:18%"></i></div></div>
+        </div>
+        <div class="va-key"><span><i style="background:#E0C35A"></i>сырьё</span><span><i style="background:#5DA130"></i>переработка на заводе</span><span><i style="background:#3F76E4"></i>торговля</span></div>
+        <p class="coin-meta">Условная схема: показывает принцип, а не реальные цены.</p>
+      </div>
+    </div>
+  </div>
+</section>
+<div class="strip stone"></div>
+
+<!-- 5b ENERGY & DEFENCE -->
+<section id="energy">
+  <div class="wrap">
+    <div class="sec-head">
+      <p class="eyebrow">Энергия, ресурсы и оборона</p>
+      <h2>Что питает остров и что его защищает</h2>
+      <p class="lead">Две атомные электростанции дают энергию для производства. Вышки добывают уголь и нефть, хранилище держит запасы, а военная база защищает остров. Каждый из этих объектов требует людей и ресурсов, которые можно было бы потратить на что-то другое.</p>
+    </div>
+    <div class="en-grid">
+      <div class="px en-main">
+        <div class="big"><span class="ico" data-ico="npp"></span><div><p class="eyebrow">Энергетика · 2 объекта</p><h3>Атомные электростанции</h3></div></div>
+        <p>Две АЭС стоят за полями. Они дают электроэнергию мукомольному заводу, мастерским и домам. Без энергии остановится главная промышленность острова.</p>
+        <div class="mini-chain"><span class="gui step"><span class="ico" data-ico="npp"></span>2 АЭС</span><span class="mc-arr">→</span><span class="gui step"><span class="ico" data-ico="bolt"></span>Электросеть</span><span class="mc-arr">→</span><span class="gui step"><span class="ico" data-ico="mill"></span>Завод</span><span class="mc-arr">→</span><span class="gui step"><span class="ico" data-ico="house"></span>Дома</span></div>
+        <p class="coin-meta" style="color:var(--muted)">Две станции вместо одной: если одна остановится на ремонт, остров не останется без энергии.</p>
+      </div>
+      <div class="en-side">
+        <button class="px en-card" data-obj="coal"><span class="ico" data-ico="rig"></span><span><b>Угольная вышка</b><span>Добывает уголь — невозобновляемый ресурс.</span></span></button>
+        <button class="px en-card" data-obj="oil"><span class="ico" data-ico="oil"></span><span><b>Нефтяная вышка</b><span>Добывает нефть — топливо и сырьё.</span></span></button>
+        <button class="px en-card" data-obj="storage"><span class="ico" data-ico="chest"></span><span><b>Хранилище ресурсов</b><span>Держит запасы добытых ресурсов.</span></span></button>
+        <button class="px en-card" data-obj="military"><span class="ico" data-ico="army"></span><span><b>Военная база</b><span>Защищает остров.</span></span></button>
+        <p class="note" style="margin:0">Нажмите на карточку, чтобы найти объект на карте.</p>
+      </div>
+    </div>
+
+    <div class="gui gb" id="gb">
+      <div class="gb-text">
+        <p class="eyebrow" style="color:#7A5230">Модель «пушки или масло»</p>
+        <h3>Оборона или продовольствие?</h3>
+        <p>Военная база нужна для безопасности, но люди и ресурсы на ней не выращивают пшеницу и не работают на заводе. Сдвиньте ползунок и посмотрите альтернативную стоимость обороны.</p>
+        <label for="gbRange" class="gb-label">Доля ресурсов на оборону: <b id="gbVal">20%</b></label>
+        <input type="range" id="gbRange" min="0" max="100" value="20">
+        <div class="gb-out" id="gbOut" aria-live="polite"></div>
+        <p class="coin-meta">Учебная модель: показывает принцип, а не реальные данные острова.</p>
+      </div>
+      <div class="gb-chart"><svg viewBox="0 0 520 380" id="gbSvg" role="img" aria-label="Кривая производственных возможностей: продовольствие и оборона"></svg></div>
+    </div>
+  </div>
+</section>
+<div class="strip water"></div>
+
+<!-- 6 SIMULATOR -->
+<section id="sim">
+  <div class="wrap">
+    <div class="sec-head">
+      <p class="eyebrow">Изолированная экономика</p>
+      <h2>Что произойдёт, если исчезнет один ресурс?</h2>
+      <p class="lead">На острове нельзя просто купить недостающее за границей. Выберите ресурс и посмотрите, как его нехватка проходит по всей экономике.</p>
+    </div>
+    <div class="sim">
+      <div class="gui sim-pick" role="group" aria-label="Ресурс">
+        <p>РЕСУРС ИСЧЕЗАЕТ:</p>
+        <button class="res" data-res="wheat" aria-pressed="true"><span class="ico" data-ico="wheat"></span>Пшеница</button>
+        <button class="res" data-res="water" aria-pressed="false"><span class="ico" data-ico="drop"></span>Вода</button>
+        <button class="res" data-res="ore" aria-pressed="false"><span class="ico" data-ico="ore"></span>Минералы</button>
+        <button class="res" data-res="labour" aria-pressed="false"><span class="ico" data-ico="hammer"></span>Рабочие руки</button>
+        <button class="res" data-res="energy" aria-pressed="false"><span class="ico" data-ico="bolt"></span>Энергия</button>
+      </div>
+      <div class="px sim-out" id="simOut" aria-live="polite"></div>
+    </div>
+  </div>
+</section>
+<div class="strip stone"></div>
+
+<!-- 7 PROBLEMS -->
+<section id="problems">
+  <div class="wrap">
+    <div class="sec-head">
+      <p class="eyebrow">Экономические проблемы</p>
+      <h2>С чем сталкивается изолированный остров</h2>
+      <p class="lead">Дефицит — главная причина, по которой Nova Terra должна делать выбор. Вот ограничения, с которыми живёт остров.</p>
+    </div>
+    <div class="prob" id="probGrid"></div>
+  </div>
+</section>
+<div class="strip"></div>
+
+<!-- 8 FUTURE -->
+<section id="future">
+  <div class="wrap">
+    <div class="sec-head">
+      <p class="eyebrow">Будущее Nova Terra</p>
+      <h2>Как сделать экономику устойчивее?</h2>
+    </div>
+    <div class="banner"><span class="ico" data-ico="warn"></span><span>Всё в этом разделе — предложения на будущее. Этих объектов на острове пока нет.</span></div>
+    <div class="fut" id="futGrid"></div>
+  </div>
+</section>
+<div class="strip planks"></div>
+
+<!-- 9 DASHBOARD -->
+<section id="dashboard">
+  <div class="wrap">
+    <div class="sec-head">
+      <p class="eyebrow">Экономический dashboard</p>
+      <h2>Показатели Nova Terra</h2>
+      <p class="lead">Ключевые данные острова. Цели и прогнозы отмечены отдельно, чтобы их нельзя было спутать с фактами.</p>
+    </div>
+    <div class="gui dash">
+      <div class="dash-grid">
+        <div class="slot kpi w2"><span class="lbl">Население</span><span class="val">750</span><span class="sm">жителей</span></div>
+        <div class="slot kpi w2"><span class="lbl">Основная промышленность</span><span class="val" style="font-size:22px">Мукомольное производство</span></div>
+        <div class="slot kpi w2"><span class="lbl">Валюта</span><span class="val" style="display:flex;align-items:center;gap:8px"><span class="ico" data-ico="coin"></span>Terra Coin</span></div>
+        <div class="slot kpi w3"><span class="lbl">Основные ресурсы</span><div class="res-chips"><span><span class="ico" data-ico="wheat"></span>Сельхозпродукция</span><span><span class="ico" data-ico="drop"></span>Вода</span><span><span class="ico" data-ico="ore"></span>Минералы</span><span><span class="ico" data-ico="coal"></span>Уголь</span><span><span class="ico" data-ico="oil"></span>Нефть</span></div></div>
+        <div class="slot kpi w3"><span class="lbl">Основной рынок</span><span class="val" style="font-size:22px">Внутренний</span><span class="sm">Товары производятся и продаются на острове</span></div>
+        <div class="slot kpi w2"><span class="lbl">Инфляция</span><span class="val">≤ 2%</span><span class="sm">в год · <span class="tag goal" style="color:#2F6B1E">цель</span></span></div>
+        <div class="slot kpi w2"><span class="lbl">Вклады / кредиты</span><span class="val">3% / 5%</span><span class="sm">в год</span></div>
+        <div class="slot kpi w2"><span class="lbl">Население через 10 лет</span><span class="val">≈ 1 050</span><span class="sm"><span class="tag est" style="color:#8A5A00">проектная оценка</span></span></div>
+        <div class="slot kpi w3"><span class="lbl">Индекс счастья · цели (из 10)</span><div class="hbars" id="hbars"></div></div>
+        <div class="slot kpi w3"><span class="lbl">Гарантировано каждому</span><div class="needs"><span>Чистая вода</span><span>Еда</span><span>Жильё</span><span>Медицина</span><span>Образование</span></div><span class="sm">Совет острова: 9 членов, выборы каждый год</span></div>
+      </div>
+      <div class="dash-grid" style="margin-top:14px"><div class="slot kpi w3"><span class="lbl">Энергетика</span><span class="val" style="display:flex;align-items:center;gap:8px"><span class="ico" data-ico="npp"></span>2 АЭС</span><span class="sm">Электроэнергия для завода, мастерских и домов</span></div><div class="slot kpi w3"><span class="lbl">Оборона</span><span class="val" style="display:flex;align-items:center;gap:8px"><span class="ico" data-ico="army"></span>Военная база</span><span class="sm">Расположена рядом с мэрией и домом министров</span></div></div>
+      <p class="foot">Точные показатели ВВП, зарплат и объёмов производства пока не определены и на портале не приводятся.</p>
+    </div>
+  </div>
+</section>
+
+<div class="strip stone"></div>
+<!-- QUIZ -->
+<section id="quiz">
+  <div class="wrap">
+    <div class="sec-head">
+      <p class="eyebrow">Проверь себя</p>
+      <h2>Понял ли ты экономику Nova Terra?</h2>
+      <p class="lead">Пять вопросов по разделам портала. Ответ сразу покажет, прав ли ты.</p>
+    </div>
+    <div class="quiz" id="quizBox"></div>
+  </div>
+</section>
+
+<!-- 10 FINAL -->
+<section class="final" aria-label="Итог">
+  <canvas id="finalIsland" aria-hidden="true"></canvas>
+  <div class="wrap">
+    <h2>NOVA TERRA</h2>
+    <blockquote>«Остров, который создаёт свою экономику из собственных ресурсов.»</blockquote>
+    <div class="gui cycle" aria-label="Экономический цикл">
+      <span class="cyc slot"><span class="ico" data-ico="ore"></span>Ресурсы</span><span class="cyc-arr">→</span>
+      <span class="cyc slot"><span class="ico" data-ico="mill"></span>Производство</span><span class="cyc-arr">→</span>
+      <span class="cyc slot"><span class="ico" data-ico="market"></span>Торговля</span><span class="cyc-arr">→</span>
+      <span class="cyc slot"><span class="ico" data-ico="coin"></span>Доход</span><span class="cyc-arr">→</span>
+      <span class="cyc slot"><span class="ico" data-ico="people"></span>Потребление</span><span class="cyc-arr">↺</span>
+      <span class="cyc-back">Потребление снова запускает производство — так замыкается экономический цикл</span>
+    </div>
+  </div>
+</section>
+</main>
+<footer>
+  <div class="wrap">
+    <span>Nova Terra · экономический портал · учебный проект MYP Economics, Unit 1</span>
+    <span>The Balance Builders: Алексей Абдуннур, Ерқайнар Жомарт, Құмар Рамазан, Елеу Ерелхан</span>
+  </div>
+</footer>
+
+<script>
+(function(){
+/* ---------- pixel icons ---------- */
+var PAL={k:'#1c1c1c',y:'#F2B53A',Y:'#FBE38A',o:'#C98F1E',g:'#5DA130',G:'#3A7019',l:'#8FD14F',b:'#3F76E4',B:'#9CC0F5',n:'#7A5230',N:'#A0703A',w:'#F3F3F0',s:'#8A8A86',S:'#C6C6C6',d:'#4A4A4A',r:'#C8423A',R:'#E36F6F',p:'#E3B48C',c:'#3FC1D9'};
+var IC={
+wheat:["..y..y..",".yYy.Yy.","..yy.y..",".yY.yYy.","..y.yy..","...gg...","..gGg...","...G...."],
+mill:["..nnnn..",".nNNNNn.","nNNNNNNn","sSSSSSSs","sSdSSdSs","sSSSSSSs","sSSddSSs","ssssssss"],
+market:["rwrwrwrw","rwrwrwrw","n......n","n.yYgl.n","nNNNNNNn","n......n","n......n","n......n"],
+people:[".nn..nn.",".pp..pp.",".pp..pp.","bbbbrrrr","bbbbrrrr",".bb..rr.",".dd..dd.",".dd..dd."],
+pickaxe:["sSSSS...","....SS..","...n.Ss.","..n...S.",".n....S.","n.......","........","........"],
+ore:["ssSsssSs","sSssyssS","ssyYssss","sssssSss","sSssssbs","ssssbBss","sSsssssS","ssSsssss"],
+brick:["NNNkNNNN","NNNkNNNN","kkkkkkkk","NkNNNNkN","NkNNNNkN","kkkkkkkk","NNNkNNNN","NNNkNNNN"],
+house:["...rr...","..rrrr..",".rrrrrr.","rrrrrrrr",".wwwwww.",".wbwwbw.",".wwnnww.",".wwnnww."],
+drop:["...b....","...b....","..bBb...","..bBb...",".bBBbb..",".bBbbb..",".bbbbb..","..bbb..."],
+reservoir:["ssssssss","sbbbbbbs","sBbbBbbs","sbbbbbbs","sbbBbbBs","sbbbbbbs","sbbbbbbs","ssssssss"],
+coin:["..oooo..",".oyyyyo.","oyYYYYyo","oyyYYyyo","oyyYYyyo","oyyYYyyo",".oyyyyo.","..oooo.."],
+shield:["bbbbbbbb","bBBBBBBb","bBByBBBb","bByyyBBb",".bBBBBb.",".bBBBBb.","..bBBb..","...bb..."],
+cross:["wwwwwwww","wwwrrwww","wwwrrwww","wrrrrrrw","wrrrrrrw","wwwrrwww","wwwrrwww","wwwwwwww"],
+tower:["..wwww..","..wBBw..","..wwww..","..wBBw..","..wwww..","..wBBw..","..wwww..","..wnnw.."],
+tree:["..gggg..",".gglggg.","gglggggg","gggggGgg",".gGgggg.","..gggg..","...nn...","...nn..."],
+office:["...nn...","..n..n..","nnnnnnnn","nNNNNNNn","nNNyyNNn","nNNNNNNn","nNNNNNNn","nnnnnnnn"],
+hall:["...yy...","..ssss..",".SSSSSS.","ssssssss","SsSsSsSs","SsSsSsSs","SsSsSsSs","ssssssss"],
+ministers:[".r......",".rr.....",".k.SSSS.",".kSSSSSS","ssssssss","SbSbSbSb","SbSbSbSb","ssssssss"],
+road:["dddddddd","dddddddd","dddddddd","yydyydyy","dddddddd","dddddddd","dddddddd","dddddddd"],
+shop:["rrrrrrrr","rwrwrwrw","SSSSSSSS","SbbSSbbS","SbbSSbbS","SSSnnSSS","SSSnnSSS","ssssssss"],
+sun:["y..y..y.",".y.y.y..","..yYy...","yyYYYyy.","..yYy...",".y.y.y..","y..y..y.","........"],
+wind:["...w....","...w....","...ww...","wwwkw...","...k.w..","...k..w.","...k....","..kkk..."],
+gear:["...ss...",".s.ss.s.","..ssss..","sss..sss","sss..sss","..ssss..",".s.ss.s.","...ss..."],
+compost:["nnnnnnnn","nGgGgGgn","ngGgGgGn","nGgGgGgn","nNNNNNNn","nNNNNNNn","nNNNNNNn","nnnnnnnn"],
+chest:["nnnnnnnn","nNNNNNNn","nNNNNNNn","kkkSSkkk","nNNSSNNn","nNNNNNNn","nNNNNNNn","nnnnnnnn"],
+warn:["...yy...","...yy...","..yyyy..","..ykky..",".yykkyy.",".yyyyyy.","yyykkyyy","yyyyyyyy"],
+hammer:["ssssss..","ssssss..","..nn....","..nn....","..nn....","..nn....","..nn....","..nn...."],
+bread:["........","..NNNN..",".NyNyNN.","NNNNNNNN","NyNNyNNN","NNNNNNNN",".nnnnnn.","........"],
+flour:["..wkkw..","..wwww..",".wwwwww.","wwwwwwww","wwSwwSww","wwwwwwww","wwwwwwww",".wwwwww."],
+up:["...RR...","..RRRR..",".RRRRRR.","...RR...","...RR...","...RR...","...RR...","...RR..."],
+down:["...BB...","...BB...","...BB...","...BB...","...BB...",".BBBBBB.","..BBBB..","...BB..."],
+field:["yYyYyYyY","nnnnnnnn","gGgGgGgG","nnnnnnnn","yYyYyYyY","nnnnnnnn","gGgGgGgG","nnnnnnnn"],
+pipe:["........","SSSSSSSS","sbbbbbbs","sBbbBbbs","sbbbbbbs","SSSSSSSS","...B....","...b...."],
+npp:["..w..w..",".w..w...","..SSSS..","..sSSs..","...SS...","..sSSs..",".sSSSSs.","ssssssss"],
+bolt:["....yy..","...yy...","..yy....",".yyyyy..","...yy...","..yy....",".yy.....","y......."],
+army:["GGGGGGGG","GggggggG","GggyyggG","GgyyyygG",".GggggG.",".GggggG.","..GggG..","...GG..."],
+coal:["ssSsssSs","skksssSs","skkssSss","sssskkss","sSsskkSs","sskssssS","skkssSss","ssSsssss"],
+oil:[".dddddd.","dkkkkkkd","dddddddd","dkkkkkkd","dkkykkkd","dddddddd","dkkkkkkd",".dddddd."],
+rig:["...k....","..k.k...","..kkk...",".k.k.k..",".kk.kk..","k..k..k.","kkkkkkk.","nnnnnnnn"],
+city:["...S....","..SSS.r.","..SbS.rr",".rSSSrrr","rrSbSwww","wwSSSwbw","wwSbSwww","ssssssss"]
+};
+function svg(name){var m=IC[name];if(!m)return'';var h=m.length,w=m[0].length,o='<svg viewBox="0 0 '+w+' '+h+'" shape-rendering="crispEdges" aria-hidden="true">';for(var y=0;y<h;y++)for(var x=0;x<w;x++){var c=PAL[m[y][x]];if(c)o+='<rect x="'+x+'" y="'+y+'" width="1.02" height="1.02" fill="'+c+'"/>';}return o+'</svg>';}
+function paintIcons(root){(root||document).querySelectorAll('[data-ico]').forEach(function(el){el.innerHTML=svg(el.getAttribute('data-ico'));});}
+function ico(n){return '<span class="ico" data-ico="'+n+'">'+svg(n)+'</span>';}
+paintIcons();
+document.querySelectorAll('[data-ico-big]').forEach(function(el){
+  var m=["....oooooo....","..ooyyyyyyoo..",".oyyYYYYYYyyo.",".oyYYYYYYYYyo.","oyyykkkkkkyyyo","oyyykkkkkkyyyo","oyyYYykkyYYyyo","oyyYYykkyYYyyo","oyyYYykkyYYyyo","oyyYYykkyYYyyo",".oyYYykkyYYyo.",".oyyyyyyyyyyo.","..ooyyyyyyoo..","....oooooo...."];
+  IC.bigcoin=m; PAL.k='#8A5A00'; el.innerHTML=svg('bigcoin'); PAL.k='#1c1c1c';
+});
+
+/* ---------- seeded noise + pixel island ---------- */
+function rng(seed){return function(){seed|=0;seed=seed+0x6D2B79F5|0;var t=Math.imul(seed^seed>>>15,1|seed);t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296;};}
+function vnoise(seed){var r=rng(seed),g=[];for(var i=0;i<64*64;i++)g.push(r());return function(x,y){var xi=Math.floor(x),yi=Math.floor(y),xf=x-xi,yf=y-yi;function v(a,b){return g[((b&63)*64)+(a&63)];}var s=function(t){return t*t*(3-2*t)};var a=v(xi,yi),b=v(xi+1,yi),c=v(xi,yi+1),d=v(xi+1,yi+1);var u=s(xf),w=s(yf);return a+(b-a)*u+(c-a)*w+(a-b-c+d)*u*w;};}
+function shade(hex,amt){var n=parseInt(hex.slice(1),16),r=(n>>16)+amt,g=(n>>8&255)+amt,b=(n&255)+amt;r=Math.max(0,Math.min(255,r));g=Math.max(0,Math.min(255,g));b=Math.max(0,Math.min(255,b));return'rgb('+r+','+g+','+b+')';}
+var reduce=window.matchMedia&&window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+function island(canvas,opt){
+  var ctx=canvas.getContext('2d'),cell=opt.cell||8,water=[],timer=null,cols,rows;
+  function draw(){
+    var rect=canvas.getBoundingClientRect(),dpr=Math.min(window.devicePixelRatio||1,2);
+    cols=Math.ceil(rect.width/cell);rows=Math.ceil(rect.height/cell);
+    canvas.width=Math.round(cols*cell*dpr);canvas.height=Math.round(rows*cell*dpr);
+    ctx.setTransform(dpr,0,0,dpr,0,0);ctx.imageSmoothingEnabled=false;
+    var nz=vnoise(opt.seed||7),r=rng(opt.seed||7);water=[];
+    var narrow=rect.width<700;
+    var cx=cols*(narrow?0.5:opt.cx),cy=rows*0.52,rx=cols*(narrow?0.46:opt.rx),ry=rows*0.42;
+    for(var y=0;y<rows;y++)for(var x=0;x<cols;x++){
+      var u=(x-cx)/rx,v=(y-cy)/ry,n=nz(x*0.12,y*0.12)*0.5+nz(x*0.3,y*0.3)*0.25;
+      var d=u*u+v*v+(n-0.37)*0.55,col,j=Math.floor(r()*14)-7;
+      if(d>=1.25){col=d>1.9?'#1E4FA6':'#2C62C4';water.push([x,y,col]);}
+      else if(d>=1.0){col='#4F8BE6';water.push([x,y,col]);}
+      else if(d>=0.86){col='#DCCB92';}
+      else{
+        col='#5DA130';
+        if(u<-0.2&&u>-0.82&&v>-0.55&&v<0.3){col=(y%4<2)?'#D9BE52':'#86BF45';if(x%9===0)col='#3F76E4';}
+        if(u<-0.35&&u>-0.62&&v>-0.86&&v<-0.6)col='#3F76E4';
+        if(u>-0.05&&u<0.12&&v>0.5&&v<0.68)col='#3F76E4';
+        if(u<-0.3&&u>-0.62&&v>0.38&&v<0.78){col=(nz(x*.5,y*.5)>.55)?'#6E6E6A':'#8A8A86';if(u>-0.5&&u<-0.42&&v>0.52&&v<0.64)col='#1C1C1C';}
+        if(u>=-0.26&&u<-0.12&&v>0.38&&v<0.6)col=(y%3===0)?'#7A5230':'#A0703A';
+        var townU=u>0.0&&u<0.8&&v>-0.68&&v<0.5;
+        if(townU){var bx=Math.floor((u+1)*14),by=Math.floor((v+1)*9);
+          if(((bx%3)!==0)&&((by%3)!==0)){var pal=['#CBBE9A','#8B3A2B','#2E2E2E','#DAD5C8','#E2D2A6','#C8423A','#B5AC95'];col=pal[(bx*7+by*3)%pal.length];}
+          else col='#6E6E6A';}
+        if(Math.abs(u-0.38)<0.035&&v>-0.95&&v<0.95)col='#3A3A3A';
+        if(Math.abs(v+0.05)<0.05&&u>-0.15&&u<0.85)col='#3A3A3A';
+        if(u>0.52&&u<0.66&&v>-0.62&&v<-0.28)col=(x%2===0&&y%2===0)?'#C9C3B3':'#F3EEDC';
+        if(u>0.66&&u<0.72&&v>-0.55&&v<-0.25)col='#3C5A63';
+        if(col==='#5DA130'&&r()<0.09)col='#2F6B1E';
+      }
+      ctx.fillStyle=col.charAt(0)==='#'?shade(col,j):col;ctx.fillRect(x*cell,y*cell,cell,cell);
+    }
+  }
+  function sparkle(){
+    if(!water.length)return;
+    for(var i=0;i<10;i++){var w=water[Math.floor(Math.random()*water.length)];ctx.fillStyle=Math.random()<0.5?'#9CC0F5':w[2];ctx.fillRect(w[0]*cell,w[1]*cell,cell,cell);}
+  }
+  draw();
+  var t;window.addEventListener('resize',function(){clearTimeout(t);t=setTimeout(draw,150);});
+  if(!reduce)timer=setInterval(sparkle,140);
+}
+island(document.getElementById('heroIsland'),{seed:11,cx:0.68,rx:0.3,cell:8});
+island(document.getElementById('finalIsland'),{seed:23,cx:0.5,rx:0.4,cell:10});
+
+/* ---------- 2 chains ---------- */
+var CHAINS={
+ food:[
+  ['wheat','Поля','Производят пшеницу — основной ресурс для пищевой промышленности. Поля орошаются каналами от резервуаров.'],
+  ['mill','Мукомольный завод','Перерабатывает пшеницу в муку, создавая добавленную стоимость и рабочие места.'],
+  ['market','Рынок / магазины','Товары продаются населению за собственную валюту Nova Terra — Terra Coin.'],
+  ['people','Жители','Покупают товары, получают доход от работы и возвращают деньги в экономику через потребление.']],
+ build:[
+  ['pickaxe','Шахты','Добывают минералы: камень и руду, из которых остров строит дома и делает инструменты.'],
+  ['ore','Сырьё','Добытые минералы становятся строительными материалами и основой для инструментов — капитала острова.'],
+  ['brick','Строительство','Строители превращают материалы в дома, дороги и мастерские. Новые дома строятся только внутри городской зоны.'],
+  ['city','Город','Жильё, магазины и службы для 750 жителей. Растущее население требует новых домов, поэтому сырьё нужно расходовать бережно.']],
+ energy:[
+  ['npp','2 АЭС','Две атомные электростанции вырабатывают электроэнергию для всего острова.'],
+  ['bolt','Электросеть','Передаёт энергию от станций к заводу, мастерским и домам.'],
+  ['mill','Завод и мастерские','Используют энергию, чтобы перерабатывать сырьё в товары. Без энергии производство остановится.'],
+  ['people','Жители','Получают свет дома и работу на предприятиях, которые работают на энергии.']],
+ fuel:[
+  ['rig','Угольная и нефтяная вышки','Добывают уголь и нефть. Это невозобновляемые ресурсы: когда-нибудь они закончатся.'],
+  ['chest','Хранилище ресурсов','Хранит добытое сырьё, чтобы у острова был запас на трудные времена.'],
+  ['gear','Промышленность','Использует топливо и сырьё для работы машин и производства.'],
+  ['city','Город','Получает товары, произведённые из ресурсов острова.']],
+ water:[
+  ['reservoir','Резервуары','На острове много источников пресной воды. Они наполняют резервуары, которые охраняют водные смотрители.'],
+  ['pipe','Водоснабжение','Каналы и трубы доставляют воду в дома и на поля. Порядок использования: питьё, затем быт, затем поля.'],
+  ['people','Население','Каждому жителю гарантировано не меньше 20 литров чистой воды в день — это одна из базовых потребностей.']]
+};
+var chainEl=document.getElementById('chain'),infoEl=document.getElementById('chainInfo'),loop=document.getElementById('moneyLoop');
+function showInfo(n){infoEl.innerHTML=ico(n[0])+'<div><h3>'+n[1]+'</h3><p>'+n[2]+'</p></div>';}
+function renderChain(key){
+  var c=CHAINS[key],h='';
+  c.forEach(function(n,i){if(i)h+='<div class="arrow" aria-hidden="true"><i></i></div>';h+='<button class="node'+(i===0?' sel':'')+'" data-i="'+i+'"><span class="slot">'+ico(n[0])+'</span><b>'+n[1]+'</b></button>';});
+  chainEl.innerHTML=h;showInfo(c[0]);loop.hidden=key!=='food';
+  chainEl.querySelectorAll('.node').forEach(function(b){
+    function pick(){chainEl.querySelectorAll('.node').forEach(function(x){x.classList.remove('sel')});b.classList.add('sel');showInfo(c[+b.dataset.i]);}
+    b.addEventListener('mouseenter',pick);b.addEventListener('focus',pick);b.addEventListener('click',pick);
+  });
+}
+document.querySelectorAll('.tab').forEach(function(t){t.addEventListener('click',function(){
+  document.querySelectorAll('.tab').forEach(function(x){x.setAttribute('aria-selected','false')});t.setAttribute('aria-selected','true');renderChain(t.dataset.chain);});});
+renderChain('food');
+
+/* ---------- 3 currency transactions ---------- */
+var TX=[
+ ['bread','Покупка продуктов','people','Жители','market','Рынок','Базовый продуктовый паёк каждый житель получает бесплатно. Всё сверх него — дополнительную выпечку, рыбу, фрукты — жители покупают на рынке за Terra Coin.'],
+ ['hammer','Оплата услуг','people','Жители','office','Мастер','Медицина и образование бесплатны. За другие услуги, например ремонт вещей в мастерской вместо покупки новых, жители платят в Terra Coin.'],
+ ['coin','Зарплата работников','mill','Мукомольный завод','people','Работники','Работники получают зарплату в Terra Coin. Если базовая корзина дорожает, зарплаты растут вместе с ценами. Смены на работах, которые никто не любит, оплачиваются вдвойне.'],
+ ['market','Торговля на рынке','field','Фермеры','market','Субботний рынок','На субботнем рынке жители продают и обменивают излишки — урожай со своих огородов и изделия ручной работы. Накапливать продукты, чтобы поднять цены, запрещено.'],
+ ['hall','Налоги','people','Жители','hall','Совет острова','Главный налог Nova Terra платится временем: каждый житель отдаёт один день в неделю общественным работам. В Terra Coin платятся штрафы за нарушение правил, например за превышение лимита вылова рыбы.']
+];
+var txList=document.getElementById('txList'),txShow=document.getElementById('txShow');
+txList.innerHTML=TX.map(function(t,i){return '<button class="gui tx" aria-pressed="'+(i===0)+'" data-i="'+i+'">'+ico(t[0])+'<b>'+t[1]+'</b></button>';}).join('');
+function showTx(i){var t=TX[i];txShow.innerHTML='<div class="flowline"><span class="gui party">'+ico(t[2])+t[3]+'</span><span class="coinrun" aria-hidden="true"><span>'+svg('coin')+'</span></span><span class="gui party">'+ico(t[4])+t[5]+'</span></div><p>'+t[6]+'</p>';}
+txList.querySelectorAll('.tx').forEach(function(b){b.addEventListener('click',function(){txList.querySelectorAll('.tx').forEach(function(x){x.setAttribute('aria-pressed','false')});b.setAttribute('aria-pressed','true');showTx(+b.dataset.i);});});
+showTx(0);
+
+/* ---------- 4 city ---------- */
+var LAYERS=[['all','Все','#F3EEDC'],['gov','Управление и оборона','#2E4FA0'],['home','Жильё','#C8423A'],['ind','Промышленность и энергия','#8E8A80'],['res','Ресурсы и вода','#5DA130'],['trade','Торговля и услуги','#F2B53A'],['infra','Инфраструктура','#3A3A3A']];
+var OBJ=[
+ ['fields','Поля','Crop Fields','wheat',[[480,520]],'Сельское хозяйство','Пшеница и овощи, которые орошаются каналами от резервуаров. Пшеница — сырьё для мукомольного завода.','res'],
+ ['res','Резервуары','Reservoirs','reservoir',[[480,310]],'Вода','Резервуары пресной воды. Их наполняют многочисленные источники острова. Порядок использования воды: питьё, быт, поля.','res'],
+ ['police','Полицейский участок','Police Station','shield',[[1090,580]],'Управление','Следит за соблюдением правил острова: лимитов вылова, запрета загрязнять воду и запрета накапливать продукты. Штрафы платятся в Terra Coin.','gov'],
+ ['apart','Многоквартирный дом','Apartment Block','house',[[830,285]],'Жильё','Жильё для многих семей на небольшом участке земли. Земля на острове ограничена, поэтому город растёт вверх.','home'],
+ ['houses','Дома','Houses','house',[[1075,285]],'Жильё','Частные дома. Каждая семья получает один участок по жребию: одинакового размера и на одинаковом расстоянии от воды.','home'],
+ ['tower','Башня','Tower','tower',[[1288,336]],'Жильё','Высотное жильё. Одна башня вмещает много семей и оставляет больше земли под поля и сады.','home'],
+ ['shops','Магазины','Shops','shop',[[1110,450]],'Торговля','Продают товары жителям за Terra Coin. Сюда приходят мука и продукты с мукомольного завода.','trade'],
+ ['mines','Шахты','Mines','pickaxe',[[559,758]],'Добыча ресурсов','Добывают минералы — камень и руду. Это сырьё для строительства домов и изготовления инструментов.','res'],
+ ['hall','Мэрия','Town Hall','hall',[[775,455]],'Управление','Здесь работает Совет острова из 9 членов, которых каждый год выбирают все взрослые жители. Совет устанавливает правила для земли, воды и денег.','gov'],
+ ['ministers','Дом министров','House of Ministers','ministers',[[966,450]],'Управление','Министерства управляют общественными службами острова и выполняют решения Совета.','gov'],
+ ['market','Рынок','Market','market',[[795,740]],'Торговля','Субботний рынок: жители продают и обменивают излишки за Terra Coin.','trade'],
+ ['road','Главная дорога','Main Road','road',[[1190,830]],'Инфраструктура','Связывает поля, завод, шахты и рынок с городом. По ней товары доходят до жителей.','infra'],
+ ['clinic','Клиника','Clinic','cross',[[952,580]],'Услуги','Бесплатная медицинская помощь для всех жителей — одна из гарантированных базовых потребностей.','trade'],
+ ['gardens','Сады','Gardens','tree',[[1288,720]],'Отдых','Зелёная зона для отдыха. Чистая природа и отдых входят в цели индекса счастья острова.','trade'],
+ ['offices','Офисы','Offices','office',[[1288,500]],'Услуги','Рабочие места в сфере услуг и управления.','trade'],
+ ['mill','Мукомольный завод','Flour Mill','mill',[[413,717]],'Промышленность','Главный промышленный объект Nova Terra. Перерабатывает пшеницу с полей острова в муку и создаёт добавленную стоимость.','ind'],
+ ['npp','Атомные электростанции','Nuclear Power Plants ×2','npp',[[480,120],[790,120]],'Энергетика','Две АЭС за полями вырабатывают электроэнергию для завода, мастерских и домов. Две станции надёжнее одной: если одна остановится, вторая продолжит работу.','ind'],
+ ['military','Военная база','Military Base','army',[[1019,118]],'Оборона','Защищает остров. Люди и ресурсы на базе не участвуют в производстве — это альтернативная стоимость обороны.','gov'],
+ ['coal','Угольная вышка','Coal Mining Rig','rig',[[100,350]],'Добыча ресурсов','Добывает уголь. Это невозобновляемый ресурс: его запасы на острове конечны.','res'],
+ ['oil','Нефтяная вышка','Oil Rig','oil',[[100,560]],'Добыча ресурсов','Добывает нефть — топливо и сырьё. Как и уголь, нефть не восстанавливается.','res'],
+ ['storage','Хранилище ресурсов','Resource Storage','chest',[[256,700]],'Инфраструктура','Хранит добытые ресурсы, чтобы у острова был запас на трудные времена.','infra']
+];
+var MW=1400,MH=900;
+var mapView=document.getElementById('mapView'),stage=document.getElementById('mapInner'),card=document.getElementById('objCard'),list=document.getElementById('objList'),tip=document.getElementById('mapTip');
+var pinEls=[];
+OBJ.forEach(function(o,i){o[4].forEach(function(pt){
+  var p=document.createElement('button');p.className='pin';p.textContent=i+1;p.style.left=(pt[0]/MW*100)+'%';p.style.top=(pt[1]/MH*100)+'%';p.setAttribute('aria-label',(i+1)+'. '+o[1]);p.dataset.i=i;stage.appendChild(p);pinEls.push(p);});});
+function renderList(){var h='';LAYERS.slice(1).forEach(function(L){h+='<div class="grp">'+L[1]+'</div>';OBJ.forEach(function(o,i){if(o[7]===L[0])h+='<button data-i="'+i+'"><span class="n">'+(i+1)+'</span>'+o[1]+'</button>';});});list.innerHTML=h;}
+renderList();
+var cur=-1;
+function selectObj(i,fly){var o=OBJ[i];cur=i;
+  card.innerHTML='<div class="row">'+ico(o[3])+'<div><h3>'+o[1]+'</h3><div class="en">'+o[2]+' · '+(i+1)+' / '+OBJ.length+'</div></div></div><span class="tag est" style="justify-self:start">'+o[5]+'</span><p>'+o[6]+'</p>';
+  pinEls.forEach(function(p){p.classList.toggle('on',+p.dataset.i===i)});
+  list.querySelectorAll('button').forEach(function(b){b.classList.toggle('on',+b.dataset.i===i)});
+  document.querySelectorAll('#citySvg .b').forEach(function(g){g.classList.toggle('on',g.dataset.id===o[0])});
+  if(fly){var pts=o[4],cx=0,cy=0;pts.forEach(function(p){cx+=p[0];cy+=p[1]});flyTo(cx/pts.length,cy/pts.length,pts.length>1?1.6:2.2);}
+}
+/* zoom & pan */
+var Z={z:1,x:0,y:0};
+function size(){return{w:mapView.clientWidth,h:mapView.clientHeight};}
+function clamp(){var d=size();Z.z=Math.max(1,Math.min(4,Z.z));Z.x=Math.min(0,Math.max(d.w-d.w*Z.z,Z.x));Z.y=Math.min(0,Math.max(d.h-d.w*MH/MW*Z.z,Z.y));}
+function apply(anim){stage.classList.toggle('fly',!!anim&&!reduce);clamp();stage.style.transform='translate('+Z.x+'px,'+Z.y+'px) scale('+Z.z+')';stage.style.setProperty('--z',Z.z);}
+function zoomAt(f,px,py,anim){var nz=Math.max(1,Math.min(4,Z.z*f));Z.x=px-(px-Z.x)*(nz/Z.z);Z.y=py-(py-Z.y)*(nz/Z.z);Z.z=nz;apply(anim);}
+function flyTo(mx,my,z){var d=size();var k=d.w/MW;Z.z=Math.max(Z.z,z);Z.x=d.w/2-mx*k*Z.z;Z.y=d.h/2-my*k*Z.z;apply(true);}
+document.getElementById('zIn').addEventListener('click',function(){var d=size();zoomAt(1.4,d.w/2,d.h/2,true);});
+document.getElementById('zOut').addEventListener('click',function(){var d=size();zoomAt(1/1.4,d.w/2,d.h/2,true);});
+document.getElementById('zReset').addEventListener('click',function(){Z={z:1,x:0,y:0};apply(true);});
+mapView.addEventListener('wheel',function(e){if(!(e.ctrlKey||e.metaKey))return;e.preventDefault();var r=mapView.getBoundingClientRect();zoomAt(e.deltaY<0?1.15:1/1.15,e.clientX-r.left,e.clientY-r.top,false);},{passive:false});
+mapView.addEventListener('dblclick',function(e){var r=mapView.getBoundingClientRect();zoomAt(1.6,e.clientX-r.left,e.clientY-r.top,true);});
+var drag=null,moved=false;
+mapView.addEventListener('pointerdown',function(e){if(e.button!==0)return;drag={x:e.clientX,y:e.clientY,ox:Z.x,oy:Z.y,id:e.pointerId};moved=false;});
+window.addEventListener('pointermove',function(e){if(!drag||e.pointerId!==drag.id)return;var dx=e.clientX-drag.x,dy=e.clientY-drag.y;if(!moved&&Math.abs(dx)+Math.abs(dy)>5){moved=true;mapView.classList.add('drag');try{mapView.setPointerCapture(e.pointerId)}catch(_){}}if(moved){Z.x=drag.ox+dx;Z.y=drag.oy+dy;apply(false);}});
+window.addEventListener('pointerup',function(){drag=null;mapView.classList.remove('drag');});
+mapView.addEventListener('click',function(e){if(moved){e.stopPropagation();e.preventDefault();moved=false;}},true);
+window.addEventListener('resize',function(){apply(false);});
+apply(false);
+/* layers */
+var layerEl=document.getElementById('layers'),activeLayer='all';
+layerEl.innerHTML=LAYERS.map(function(L){return '<button aria-pressed="'+(L[0]==='all')+'" data-l="'+L[0]+'"><i style="background:'+L[2]+'"></i>'+L[1]+'</button>';}).join('');
+function layerOf(id){for(var i=0;i<OBJ.length;i++)if(OBJ[i][0]===id)return OBJ[i][7];return null;}
+layerEl.addEventListener('click',function(e){var b=e.target.closest('button');if(!b)return;activeLayer=b.dataset.l;
+  layerEl.querySelectorAll('button').forEach(function(x){x.setAttribute('aria-pressed',x===b)});
+  document.querySelectorAll('#citySvg .b').forEach(function(g){g.classList.toggle('dim',activeLayer!=='all'&&layerOf(g.dataset.id)!==activeLayer)});
+  pinEls.forEach(function(p){p.classList.toggle('dim',activeLayer!=='all'&&OBJ[+p.dataset.i][7]!==activeLayer)});});
+/* tooltip */
+document.querySelectorAll('#citySvg .b').forEach(function(g){var idx=-1;for(var i=0;i<OBJ.length;i++)if(OBJ[i][0]===g.dataset.id){idx=i;break;}
+  g.style.cursor='pointer';
+  g.addEventListener('click',function(){if(idx>=0)selectObj(idx,false);});
+  g.addEventListener('mousemove',function(e){if(idx<0)return;var r=mapView.getBoundingClientRect();tip.hidden=false;tip.textContent=(idx+1)+'. '+OBJ[idx][1];var x=e.clientX-r.left+14,y=e.clientY-r.top+14;if(x>r.width-200)x=e.clientX-r.left-tip.offsetWidth-10;tip.style.left=x+'px';tip.style.top=y+'px';});
+  g.addEventListener('mouseleave',function(){tip.hidden=true;});});
+stage.addEventListener('click',function(e){var p=e.target.closest('.pin');if(p)selectObj(+p.dataset.i,true);});
+list.addEventListener('click',function(e){var b=e.target.closest('button');if(b)selectObj(+b.dataset.i,true);});
+document.querySelectorAll('.en-card').forEach(function(c){c.addEventListener('click',function(){var id=c.dataset.obj;for(var i=0;i<OBJ.length;i++)if(OBJ[i][0]===id){document.getElementById('city').scrollIntoView({behavior:reduce?'auto':'smooth'});var k=i;setTimeout(function(){selectObj(k,true)},reduce?0:500);break;}});});
+selectObj(15,false);
+
+/* ---------- guns & butter ---------- */
+(function(){var svgEl=document.getElementById('gbSvg'),rng=document.getElementById('gbRange'),out=document.getElementById('gbOut'),val=document.getElementById('gbVal');
+  var O={x:70,y:320},W=400,H=270,NS='http://www.w3.org/2000/svg';
+  function pt(a){return [O.x+W*Math.cos(a),O.y-H*Math.sin(a)];}
+  var path='M'+pt(0).join(' ');for(var i=1;i<=40;i++)path+=' L'+pt(i/40*Math.PI/2).map(function(v){return v.toFixed(1)}).join(' ');
+  svgEl.innerHTML='<path d="'+path+' L'+O.x+' '+O.y+' Z" fill="#DCE9C8"/><path d="'+path+'" fill="none" stroke="#3A7019" stroke-width="6"/>'+
+   '<rect x="'+(O.x-4)+'" y="30" width="6" height="'+(O.y-26)+'" fill="#1D1D1D"/><rect x="'+(O.x-4)+'" y="'+O.y+'" width="'+(W+50)+'" height="6" fill="#1D1D1D"/>'+
+   '<text x="'+(O.x+10)+'" y="40" font-family="Manrope,Arial,sans-serif" font-weight="800" font-size="16" fill="#1D1D1D">Оборона ↑</text>'+
+   '<text x="'+(O.x+W-150)+'" y="'+(O.y+32)+'" font-family="Manrope,Arial,sans-serif" font-weight="800" font-size="16" fill="#1D1D1D">Продовольствие →</text>'+
+   '<g id="gbGuide" stroke="#7A5230" stroke-width="3" stroke-dasharray="8 6"><line id="gbLx"/><line id="gbLy"/></g><rect id="gbPt" width="22" height="22" fill="#F2B53A" stroke="#1D1D1D" stroke-width="4"/>';
+  function upd(){var v=+rng.value,a=v/100*Math.PI/2,p=pt(a),food=Math.round(Math.cos(a)*100),def=Math.round(Math.sin(a)*100);
+    val.textContent=v+'%';var r=svgEl.querySelector('#gbPt');r.setAttribute('x',p[0]-11);r.setAttribute('y',p[1]-11);
+    var lx=svgEl.querySelector('#gbLx'),ly=svgEl.querySelector('#gbLy');lx.setAttribute('x1',p[0]);lx.setAttribute('y1',p[1]);lx.setAttribute('x2',p[0]);lx.setAttribute('y2',O.y);ly.setAttribute('x1',O.x);ly.setAttribute('y1',p[1]);ly.setAttribute('x2',p[0]);ly.setAttribute('y2',p[1]);
+    var msg=v===0?'Вся экономика работает на продовольствие, но остров ничем не защищён.':v>=90?'Почти все ресурсы уходят на оборону: еды и товаров почти не остаётся.':'Каждый новый процент на оборону стоит всё больше продовольствия: на базу уходят люди, которые могли бы работать на полях и заводе.';
+    out.innerHTML='<div class="slot"><span>Продовольствие</span><b>'+food+'%</b></div><div class="slot"><span>Оборона</span><b>'+def+'%</b></div><div class="wide">Альтернативная стоимость: −'+(100-food)+'% продовольствия от максимума. '+msg+'</div>';}
+  rng.addEventListener('input',upd);upd();})();
+
+/* ---------- 6 simulator ---------- */
+var SIM={
+ wheat:{t:'Без пшеницы',steps:[['wheat','Меньше пшеницы'],['flour','Меньше муки'],['bread','Меньше продуктов'],['up','Рост цен'],['down','Снижение потребления']],
+  hit:[['Поля',3],['Мукомольный завод',3],['Рынок',2],['Жители',2],['Terra Coin',1]],
+  note:'Есть и второй удар: Terra Coin обеспечена запасом зерна. Пока урожай не восстановится, Банк острова не выпускает новые монеты.',
+  shield:['Большие запасы зерна на случай неурожая','Чередование культур, чтобы почва не истощалась','Базовый продуктовый паёк остаётся бесплатным для всех']},
+ water:{t:'Без воды',steps:[['drop','Меньше воды'],['field','Проблемы с сельским хозяйством'],['mill','Меньше производства'],['bread','Дефицит продуктов']],
+  hit:[['Резервуары',3],['Поля',3],['Мукомольный завод',2],['Жители',3]],
+  note:'Вода нужна и людям, и полям. Поэтому на острове закреплён порядок: сначала питьё, затем быт, и только потом поля.',
+  shield:['Много источников пресной воды и резервуары','Водные смотрители и запрет загрязнять воду','Каждому гарантировано не меньше 20 литров в день']},
+ ore:{t:'Без минералов',steps:[['pickaxe','Меньше добычи в шахтах'],['ore','Меньше сырья'],['brick','Строительство замедляется'],['house','Нехватка жилья']],
+  hit:[['Шахты',3],['Строительство',3],['Город',2],['Жители',1]],
+  note:'Население может вырасти примерно до 1 050 человек за 10 лет (проектная оценка), и без сырья новым семьям будет негде жить.',
+  shield:['Ремонт вещей вместо покупки новых','Строительство вверх, а не вширь: башни экономят материалы и землю','Переработка отходов (предложение на будущее)']},
+ energy:{t:'Без энергии',steps:[['bolt','Меньше электроэнергии'],['mill','Мукомольный завод останавливается'],['flour','Меньше муки'],['bread','Меньше продуктов'],['up','Рост цен']],
+  hit:[['АЭС',3],['Мукомольный завод',3],['Мастерские',2],['Рынок',2],['Жители',2]],
+  note:'Энергия связывает всю промышленность острова: без неё сырьё некому и нечем перерабатывать.',
+  shield:['Две АЭС: если одна остановится, работает вторая','Запасы угля и нефти в хранилище ресурсов','Солнечная и ветровая энергетика (предложение на будущее)']},
+ labour:{t:'Без рабочих рук',steps:[['hammer','Меньше работников'],['field','Поля и завод работают медленнее'],['bread','Меньше продукции'],['up','Рост цен']],
+  hit:[['Поля',2],['Мукомольный завод',2],['Шахты',2],['Жители',2]],
+  note:'На острове всего 750 жителей, поэтому труд — один из самых дефицитных ресурсов.',
+  shield:['Каждый житель владеет двумя профессиями','Один день в неделю общественных работ','Автоматизация производства (предложение на будущее)']}
+};
+var simOut=document.getElementById('simOut');
+function runSim(k,animate){var s=SIM[k],h='<h3>'+s.t+': цепная реакция</h3><div class="casc">';
+  s.steps.forEach(function(st,i){if(i)h+='<span class="carr" aria-hidden="true"></span>';h+='<span class="cstep'+(i===0?' first':'')+(animate?' anim':'')+'" style="animation-delay:'+(i*0.18)+'s">'+ico(st[0])+st[1]+'</span>';});
+  h+='</div><div class="impact">'+s.hit.map(function(x){var m='';for(var i=0;i<3;i++)m+='<i class="'+(i<x[1]?(x[1]===3?'hit':'mid'):'')+'"></i>';return '<div class="imp"><b>'+x[0]+'</b><div class="meter" aria-label="Сила удара '+x[1]+' из 3">'+m+'</div></div>';}).join('')+'</div>';
+  h+='<p style="color:#D3E2DC">'+s.note+'</p><div class="shield"><h4>Как Nova Terra смягчает удар</h4><ul>'+s.shield.map(function(x){return'<li>'+x+'</li>'}).join('')+'</ul></div>';
+  simOut.innerHTML=h;}
+document.querySelectorAll('.res').forEach(function(b){b.addEventListener('click',function(){document.querySelectorAll('.res').forEach(function(x){x.setAttribute('aria-pressed','false')});b.setAttribute('aria-pressed','true');runSim(b.dataset.res,true);});});
+runSim('wheat',false);
+
+/* ---------- 7 problems ---------- */
+var PROB=[['ore','Ограниченные ресурсы','Остров не становится больше: земля, минералы и рыба конечны.'],['people','Маленькое население','Всего 750 человек должны обеспечивать весь остров.'],['hammer','Ограниченная рабочая сила','Каждый работник на полях — это работник, которого нет на заводе или в шахте.'],['warn','Риск дефицита','Если чего-то не хватает, это нельзя быстро купить за пределами острова.'],['wheat','Зависимость от урожая','Пшеница кормит людей, загружает завод и обеспечивает Terra Coin.'],['coin','Дорогое собственное производство','Всё приходится делать самим, даже то, что выгоднее было бы купить.'],['drop','Бережное использование воды','Вода нужна и людям, и полям, поэтому её расходуют по строгому порядку.'],['chest','Хранение запасов','Нужны запасы зерна и продуктов на случай неурожая.'],['coal','Невозобновляемые ресурсы','Уголь и нефть однажды закончатся, а их добыча и сжигание загрязняют природу.'],['npp','Безопасность энергетики','Атомные станции требуют строгих правил безопасности и обученных специалистов.'],['army','Расходы на оборону','Люди и ресурсы на военной базе не производят еду и товары.']];
+document.getElementById('probGrid').innerHTML=PROB.map(function(p){return '<div class="px pcard"><div class="row">'+ico(p[0])+'<h3>'+p[1]+'</h3></div><p>'+p[2]+'</p></div>';}).join('');
+
+/* ---------- 8 future ---------- */
+var FUT=[['sun','Солнечная и ветровая энергетика','Чистая энергия от солнца тропиков и постоянного западного ветра для завода и домов.'],['field','Улучшение сельского хозяйства','Больше урожая с того же поля: севооборот, лучшее орошение, компост.'],['gear','Автоматизация производства','Механизмы на мукомольном заводе освободят рабочие руки для других задач.'],['compost','Переработка отходов','Компост для полей и повторное использование материалов вместо добычи нового сырья.'],['chest','Новые продовольственные хранилища','В дополнение к хранилищу ресурсов: запасы зерна и муки на неурожайный год.'],['drop','Экономия воды','Капельный полив и сбор дождевой воды, чтобы резервуары дольше оставались полными.'],['mill','Развитие местного производства','Новые мастерские, которые перерабатывают ресурсы острова в готовые товары.']];
+document.getElementById('futGrid').innerHTML=FUT.map(function(f){return '<div class="fcard"><div class="row">'+ico(f[0])+'<span class="tag plan">предложение</span></div><h3>'+f[1]+'</h3><p>'+f[2]+'</p></div>';}).join('');
+
+/* ---------- 9 dashboard ---------- */
+var HB=[['Здоровье',9],['Свободное время',8],['Справедливость',8],['Чистая природа',9],['Сообщество',8]];
+document.getElementById('hbars').innerHTML=HB.map(function(h){var s='';for(var i=0;i<10;i++)s+='<i class="'+(i<h[1]?'f':'')+'"></i>';return '<div class="hbar"><span>'+h[0]+'</span><span class="seg">'+s+'</span><span>'+h[1]+'</span></div>';}).join('');
+
+/* ---------- quiz ---------- */
+var QZ=[
+ ['Что такое добавленная стоимость?',['Цена пшеницы на поле','Разница между ценой муки и ценой пшеницы, созданная трудом и работой завода','Налог на муку'],1,'Завод превращает пшеницу в более ценную муку. Эта разница и есть добавленная стоимость.'],
+ ['Почему Terra Coin не обесценивается?',['Банк печатает монеты, когда нужно','Монета обеспечена зерном, а новые монеты выпускаются только при росте производства','Цены на острове запрещено менять'],1,'Деньги растут вместе с товарами, поэтому цель по инфляции — не больше 2% в год.'],
+ ['Какая альтернативная стоимость у военной базы?',['Люди и ресурсы, которые могли бы производить еду и товары','Её нет','Стоимость земли под базой в Terra Coin'],0,'Выбор «пушки или масло»: чем больше ресурсов на оборону, тем меньше продовольствия.'],
+ ['Что произойдёт, если на острове не станет воды?',['Ничего, есть АЭС','Поля дадут меньше урожая, и возникнет дефицит продуктов','Вырастут зарплаты'],1,'Вода нужна полям, поэтому её нехватка бьёт по всей пищевой цепочке.'],
+ ['Какая экономическая система у Nova Terra?',['Командная','Рыночная','Смешанная'],2,'Совет гарантирует базовые потребности и устанавливает правила, а жители сами выбирают работу и торгуют на рынке.']
+];
+(function(){var box=document.getElementById('quizBox'),score=0,done=0;
+  box.innerHTML=QZ.map(function(q,i){return '<div class="px q" data-q="'+i+'"><h3>'+(i+1)+'. '+q[0]+'</h3><div class="opts">'+q[1].map(function(o,j){return '<button class="opt" data-j="'+j+'">'+o+'</button>';}).join('')+'</div><p class="why" hidden></p></div>';}).join('')+'<div class="gui score"><b id="qScore">0 / '+QZ.length+'</b><button class="btn" id="qReset">Пройти заново</button></div>';
+  box.addEventListener('click',function(e){var b=e.target.closest('.opt');if(!b||b.disabled)return;var qd=b.closest('.q'),i=+qd.dataset.q,q=QZ[i],j=+b.dataset.j;
+    qd.querySelectorAll('.opt').forEach(function(o){o.disabled=true;if(+o.dataset.j===q[2])o.classList.add('ok');});
+    if(j!==q[2])b.classList.add('bad');else score++;done++;
+    var w=qd.querySelector('.why');w.hidden=false;w.textContent=(j===q[2]?'Верно! ':'Не совсем. ')+q[3];
+    document.getElementById('qScore').textContent=score+' / '+QZ.length+(done===QZ.length?(score===QZ.length?' · отлично!':' · попробуй ещё раз'):'');});
+  box.addEventListener('click',function(e){if(e.target.id!=='qReset')return;score=0;done=0;box.querySelectorAll('.opt').forEach(function(o){o.disabled=false;o.classList.remove('ok','bad')});box.querySelectorAll('.why').forEach(function(w){w.hidden=true});document.getElementById('qScore').textContent='0 / '+QZ.length;});
+})();
+
+/* ---------- nav highlight ---------- */
+var links=[].slice.call(document.querySelectorAll('#nav a'));
+if('IntersectionObserver' in window){
+  var io=new IntersectionObserver(function(es){es.forEach(function(e){if(e.isIntersecting){links.forEach(function(a){a.classList.toggle('on',a.getAttribute('href')==='#'+e.target.id);});var on=document.querySelector('#nav a.on');if(on&&on.scrollIntoView){var nav=document.getElementById('nav');nav.scrollLeft=on.offsetLeft-nav.clientWidth/2+on.clientWidth/2;}}});},{rootMargin:'-45% 0px -50% 0px'});
+  links.forEach(function(a){var s=document.querySelector(a.getAttribute('href'));if(s)io.observe(s);});
+}
+})();
+</script>
+
+</body>
+</html>
