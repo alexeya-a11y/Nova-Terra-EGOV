@@ -390,11 +390,170 @@ h2{font-weight:600}
 .step,.cyc,.party,.res,.cstep,.imp b,.obj-list button,.layers button{font-family:var(--f-body)}
 .lead,.info p,.obj-card p,.tx-show p,.pcard p,.fcard p{font-size:16.5px}
 .eyebrow{font-size:12.5px;letter-spacing:.12em}
+
+/* ===== v2 ===== */
+/* header tools: day/night, presentation */
+.htools{display:flex;gap:6px;flex:none}
+.hbtn{display:inline-flex;align-items:center;gap:8px;height:38px;padding:0 10px;font-family:var(--f-mono);font-size:12.5px;font-weight:600;color:var(--stone-ink);background:var(--stone);border:2px solid #000;box-shadow:inset 2px 2px 0 #fff,inset -2px -2px 0 #555;cursor:pointer;white-space:nowrap}
+.hbtn:hover{background:#D8D8D8}
+.hbtn[aria-pressed="true"]{background:var(--gold);box-shadow:inset 2px 2px 0 var(--gold-2),inset -2px -2px 0 #A06E14}
+.hbtn .ico{width:20px;height:20px}
+@media (max-width:980px){.hbtn .t{display:none}}
+@media (max-width:680px){
+  #prBtn{display:none}
+  .top .wrap{flex-wrap:wrap;gap:6px 12px;padding-block:6px}
+  .htools{margin-left:auto}
+  .nav{order:3;flex:1 0 100%;margin-left:0}
+  section{scroll-margin-top:104px}
+}
+
+/* loading screen */
+.boot{position:fixed;inset:0;z-index:200;display:grid;place-items:center;background:#0A161B;cursor:pointer;animation:bootOut .45s 1.9s forwards}
+@keyframes bootOut{to{opacity:0;visibility:hidden}}
+.boot-in{display:grid;justify-items:center;gap:18px}
+.boot-coin{width:140px;height:140px;display:grid;grid-template-columns:repeat(14,1fr);grid-auto-rows:1fr}
+.boot-coin i{opacity:0;animation:blk .28s forwards}
+@keyframes blk{from{opacity:0;transform:translateY(-16px)}to{opacity:1;transform:none}}
+.boot-t{font-family:var(--f-display);font-size:44px;font-weight:700;letter-spacing:.06em;color:#fff;text-shadow:4px 4px 0 #000}
+.boot-bar{width:260px;height:16px;border:3px solid #000;background:#2C4A54}
+.boot-bar i{display:block;height:100%;width:0;background:var(--grass);animation:bootBar 1.6s .1s steps(13) forwards}
+@keyframes bootBar{to{width:100%}}
+.boot-s{font-family:var(--f-mono);font-size:12px;letter-spacing:.14em;color:var(--muted);text-transform:uppercase}
+@media (prefers-reduced-motion:reduce){.boot{display:none}}
+
+/* day and night */
+#citySvg .nshade,#citySvg .lamps{transition:opacity 1.4s}
+body.night #citySvg .nshade{opacity:.6}
+body.night #citySvg .lamps{opacity:1}
+.strip{transition:filter 1.4s}
+body.night .strip{filter:brightness(.55)}
+.hero,.final{transition:background-color 1.4s}
+body.night .hero,body.night .final{background:#0B1E44}
+
+/* clouds over the hero island */
+.hero canvas,.clouds{transition:transform .4s ease-out}
+.clouds{position:absolute;inset:0;overflow:hidden;pointer-events:none}
+.cloud{position:absolute;left:-260px;width:120px;height:24px;background:#fff;opacity:.55;animation:drift linear infinite;transition:opacity 1.4s}
+.cloud::before{content:"";position:absolute;left:24px;top:-24px;width:72px;height:24px;background:#fff}
+.cloud::after{content:"";position:absolute;left:36px;top:96px;width:120px;height:24px;background:rgba(0,0,0,.16)}
+@keyframes drift{to{transform:translateX(calc(100vw + 520px))}}
+body.night .cloud{opacity:.16}
+
+/* map: object facts, view switch, isometric canvas */
+.obj-facts{display:grid;gap:8px;margin-top:2px}
+.fact{display:grid;gap:1px;font-size:15px;color:#D3E2DC}
+.fact b{font-family:var(--f-mono);font-size:10.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--gold);font-weight:600}
+.obj-links{display:flex;flex-wrap:wrap;gap:6px;align-items:center;font-family:var(--f-mono);font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+.obj-links button{font-family:var(--f-body);font-size:13px;font-weight:800;letter-spacing:0;text-transform:none;padding:4px 8px;cursor:pointer;color:var(--stone-ink);background:var(--stone);border:2px solid #000;box-shadow:inset 2px 2px 0 #fff,inset -2px -2px 0 #555}
+.obj-links button:hover{background:var(--gold)}
+.tools-r{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+.iso-canvas{position:absolute;left:0;top:0;width:100%;height:100%;display:none;image-rendering:auto;max-width:none}
+.map-stage.iso svg{visibility:hidden}
+.map-stage.iso .iso-canvas{display:block}
+
+/* market */
+.mk{display:grid;grid-template-columns:minmax(0,1.15fr) minmax(0,1fr);gap:24px;align-items:start}
+.mk-shelf{padding:16px;display:grid;grid-template-columns:repeat(auto-fill,minmax(128px,1fr));gap:10px}
+.mk-item{position:relative;display:grid;justify-items:center;gap:6px;padding:14px 8px 10px;border:none;font:inherit;cursor:pointer;color:var(--stone-ink);background:#D6D6D6;box-shadow:inset 3px 3px 0 #fff,inset -3px -3px 0 #6A6A6A;text-align:center;transition:transform .12s,background .12s}
+.mk-item:hover{background:#A9C77E;transform:translateY(-2px)}
+.mk-item .ico{width:44px;height:44px}
+.mk-item b{font-size:14.5px;font-weight:800;line-height:1.2}
+.mk-item .pr{font-family:var(--f-display);font-size:19px;font-weight:600;color:#111;display:flex;align-items:center;gap:5px}
+.mk-item .pr .ico{width:16px;height:16px}
+.mk-item .cnt{position:absolute;top:4px;right:6px;font-family:var(--f-mono);font-size:12px;font-weight:700;background:#fff;border:2px solid #000;padding:0 5px}
+.mk-side{padding:22px;display:grid;gap:14px}
+.wallet{display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+.wallet .ico{width:40px;height:40px}
+.wallet b{font-family:var(--f-display);font-size:38px;font-weight:600;line-height:1;color:var(--gold-2);font-variant-numeric:tabular-nums}
+.wallet span{font-family:var(--f-mono);font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+.wallet>div+div{margin-left:10px;padding-left:20px;border-left:3px solid #000}
+.mk-msg{padding:12px 14px;border:3px solid #000;background:rgba(255,255,255,.05);font-size:15.5px;color:#D3E2DC}
+.mk-msg.ok{border-color:#3A7019;background:rgba(93,161,48,.14)}
+.mk-msg.bad{border-color:#9E3A3A;background:rgba(227,111,111,.14)}
+.mk-msg.mid{border-color:#A06E14;background:rgba(242,181,58,.12)}
+.split{display:grid;gap:8px}
+.split .bar{height:26px}
+.split ul{list-style:none;margin:0;padding:0;display:grid;gap:4px;font-size:14.5px;color:#D3E2DC}
+.split li{display:flex;justify-content:space-between;gap:10px}
+.split li i{display:inline-block;width:12px;height:12px;border:2px solid #000;margin-right:8px;vertical-align:-1px}
+.split p,.mk-side .fine{font-size:13.5px;color:var(--muted)}
+.mk-btns{display:flex;flex-wrap:wrap;gap:8px}
+.sbtn{font:inherit;font-size:14px;font-weight:800;padding:8px 12px;cursor:pointer;color:var(--stone-ink);background:var(--stone);border:2px solid #000;box-shadow:inset 2px 2px 0 #fff,inset -2px -2px 0 #555}
+.sbtn:hover{background:#D8D8D8}
+
+/* council cabinet */
+.cab{display:grid;grid-template-columns:minmax(0,380px) minmax(0,1fr);gap:26px;align-items:start}
+.cab-ctl{padding:18px;display:grid;gap:14px}
+.cab-h{font-family:var(--f-mono);font-size:12px;letter-spacing:.1em;color:#333;font-weight:700;border-bottom:2px solid #8B8B8B;padding-bottom:4px}
+.sl{display:grid;gap:4px}
+.sl-top{display:flex;justify-content:space-between;align-items:baseline;gap:10px}
+.sl-top b{font-size:15px;font-weight:800}
+.sl-top output{font-family:var(--f-display);font-size:20px;font-weight:600;color:#111;white-space:nowrap}
+.sl input[type=range]{width:100%;accent-color:#5DA130;height:26px;margin:0}
+.sl-hint{font-size:12.5px;color:#3a3a3a;line-height:1.35}
+.chk{display:flex;gap:10px;align-items:center;font-weight:800;font-size:14.5px;cursor:pointer}
+.chk input{width:20px;height:20px;accent-color:#5DA130;flex:none;margin:0}
+.chk.sub{margin:-2px 0 4px 14px;font-size:13.5px}
+.chk[hidden]{display:none}
+.crisis{display:grid;gap:8px}
+.cz{display:flex;gap:12px;align-items:center;padding:10px;border:none;font:inherit;font-weight:800;font-size:15px;color:var(--stone-ink);cursor:pointer;text-align:left;background:var(--stone-mid);box-shadow:inset 3px 3px 0 #373737,inset -3px -3px 0 #fff;width:100%}
+.cz .ico{width:30px;height:30px}
+.cz:hover{background:#A2A2A2}
+.cz[aria-pressed="true"]{background:#E36F6F;box-shadow:inset 3px 3px 0 #9E3A3A,inset -3px -3px 0 #F6B3B3}
+.cab-btns{display:flex;flex-wrap:wrap;gap:10px}
+.cab-btns .btn{font-size:17px;padding:9px 16px}
+.cab-out{display:grid;gap:18px}
+.cab-kpis{padding:14px;display:grid;grid-template-columns:repeat(auto-fit,minmax(168px,1fr));gap:10px}
+.ck{padding:12px;display:grid;gap:5px;align-content:start;min-width:0}
+.ck .lbl{display:flex;align-items:center;gap:6px;font-family:var(--f-mono);font-size:11px;letter-spacing:.06em;text-transform:uppercase;color:#222;font-weight:600}
+.ck .lbl .ico{width:22px;height:22px;padding:1px;background:#F3F3F0;border:2px solid #000}
+.ck .val{font-family:var(--f-display);font-size:27px;font-weight:600;line-height:1.05;color:#111;font-variant-numeric:tabular-nums}
+.ck .sm{font-size:12.5px;font-weight:700;color:#222;line-height:1.3}
+.seg10{display:flex;gap:2px}
+.seg10 i{flex:1;height:10px;background:#7d7d7d;border:2px solid #333}
+.seg10 i.ok{background:var(--grass)}
+.seg10 i.mid{background:var(--gold)}
+.seg10 i.bad{background:var(--warn)}
+.ck.mid{background:#B5A982}
+.ck.bad{background:#C79797;box-shadow:inset 3px 3px 0 #7A2E2E,inset -3px -3px 0 #F6C9C9}
+.cab-warn{padding:20px;display:grid;gap:12px}
+.cab-warn h3{font-family:var(--f-body);font-weight:800;font-size:22px;letter-spacing:0;text-shadow:none}
+.wr{display:grid;grid-template-columns:auto 1fr;gap:12px;padding:12px 14px;border:3px solid #000;background:rgba(255,255,255,.04)}
+.wr .ico{width:26px;height:26px}
+.wr b{display:block;font-size:16px}
+.wr span{color:#D3E2DC;font-size:15px}
+.wr.bad{border-color:#9E3A3A;background:rgba(227,111,111,.13)}
+.wr.mid{border-color:#A06E14;background:rgba(242,181,58,.1)}
+.wr.ok{border-color:#3A7019;background:rgba(93,161,48,.13)}
+.cab-warn .casc{margin-bottom:2px}
+.cab-model{margin-top:22px;padding:16px 20px}
+.cab-model summary{cursor:pointer;font-weight:800;font-size:16px}
+.cab-model ol{margin:12px 0 8px;padding-left:22px;color:#D3E2DC;font-size:15px;display:grid;gap:6px}
+.cab-model p{color:var(--muted);font-size:14px}
+@media (max-width:980px){.cab,.mk{grid-template-columns:minmax(0,1fr)}}
+
+/* presentation mode: every section is a slide, larger type, no fine print */
+.pbar{position:fixed;left:50%;bottom:14px;transform:translateX(-50%);z-index:60;display:flex;align-items:center;gap:8px;padding:8px;background:var(--stone);border:3px solid #000;box-shadow:inset 3px 3px 0 #fff,inset -3px -3px 0 #555,6px 6px 0 rgba(0,0,0,.45)}
+.pbar[hidden]{display:none}
+.pbar button{width:40px;height:40px;font-size:18px;font-weight:700;cursor:pointer;color:var(--stone-ink);background:#B0B0B0;border:2px solid #000;box-shadow:inset 2px 2px 0 #E2E2E2,inset -2px -2px 0 #6A6A6A}
+.pbar button:hover{background:var(--gold)}
+.pbar span{font-family:var(--f-mono);font-size:13px;font-weight:700;color:var(--stone-ink);min-width:230px;text-align:center;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:46vw}
+body.present{font-size:20px}
+body.present .wrap{max-width:1480px}
+body.present main>section{min-height:100vh;display:flex;flex-direction:column;justify-content:center}
+body.present main>section>.wrap{width:100%}
+body.present .nav,body.present footer,body.present .note,body.present .map-hint,body.present .legend-note,body.present .dash .foot{display:none}
+body.present .sec-head h2{font-size:clamp(44px,5.2vw,72px)}
+body.present .lead{font-size:22px;max-width:72ch}
+body.present .info p,body.present .obj-card p,body.present .tx-show p,body.present .pcard p,body.present .fcard p,body.present .rule p,body.present .mill-card p,body.present .va p,body.present .en-main p,body.present .gb-text p,body.present .q .opt,body.present .q .why,body.present .shield ul,body.present .wr span,body.present .mk-msg,body.present .fact{font-size:19px}
+body.present .ck .sm,body.present .sl-hint{font-size:14.5px}
 </style>
 </head>
 <body>
 
 
+<div class="boot" id="boot" aria-hidden="true"><div class="boot-in"><div class="boot-coin" id="bootCoin"></div><div class="boot-t">NOVA TERRA</div><div class="boot-bar"><i></i></div><div class="boot-s">Загрузка мира…</div></div></div>
+<script>try{if(sessionStorage.getItem('nt_boot')||(window.matchMedia&&matchMedia('(prefers-reduced-motion: reduce)').matches)){var bootEl=document.getElementById('boot');bootEl.parentNode.removeChild(bootEl);}else{sessionStorage.setItem('nt_boot','1');}}catch(e){}</script>
 <header class="top">
   <div class="wrap">
     <a class="brand" href="#top"><span class="ico" data-ico="coin"></span><span>NOVA TERRA<small>ЭКОНОМИЧЕСКИЙ ПОРТАЛ</small></span></a>
@@ -405,11 +564,16 @@ h2{font-weight:600}
       <a href="#industry">Промышленность</a>
       <a href="#energy">Энергия и оборона</a>
       <a href="#sim">Симулятор</a>
+      <a href="#cabinet">Кабинет</a>
       <a href="#problems">Проблемы</a>
       <a href="#future">Будущее</a>
       <a href="#dashboard">Показатели</a>
       <a href="#quiz">Тест</a>
     </nav>
+    <div class="htools">
+      <button class="hbtn" id="dnBtn" aria-pressed="false" title="Переключить день и ночь"><span class="ico" data-ico="sun"></span><span class="t">День</span></button>
+      <button class="hbtn" id="prBtn" aria-pressed="false" title="Режим презентации: на весь экран, крупный текст, стрелки листают разделы"><span aria-hidden="true">▶</span><span class="t">Презентация</span></button>
+    </div>
   </div>
 </header>
 
@@ -417,6 +581,7 @@ h2{font-weight:600}
 <!-- 1 HERO -->
 <section class="hero" style="padding-block:0" aria-label="Nova Terra">
   <canvas id="heroIsland" aria-hidden="true"></canvas>
+  <div class="clouds" id="heroClouds" aria-hidden="true"><i class="cloud" style="top:16%;animation-duration:95s;animation-delay:-18s"></i><i class="cloud" style="top:44%;animation-duration:130s;animation-delay:-70s"></i><i class="cloud" style="top:68%;animation-duration:110s;animation-delay:-45s"></i></div>
   <div class="wrap">
     <p class="eyebrow">Официальный экономический портал · Остров Nova Terra</p>
     <h1>NOVA TERRA</h1>
@@ -484,6 +649,12 @@ h2{font-weight:600}
     <div class="tx-head"><h3>Terra Coin в жизни города</h3><p class="eyebrow" style="color:var(--muted)">Выберите операцию</p></div>
     <div class="tx-list" id="txList"></div>
     <div class="px tx-show" id="txShow" aria-live="polite"></div>
+
+    <div class="tx-head"><h3>Субботний рынок: попробуйте купить</h3><p class="eyebrow" style="color:var(--muted)">Условные цены для примера</p></div>
+    <div class="mk">
+      <div class="gui mk-shelf" id="mkShelf" role="group" aria-label="Прилавок"></div>
+      <div class="px mk-side" id="mkSide"></div>
+    </div>
   </div>
 </section>
 <div class="strip planks"></div>
@@ -494,11 +665,11 @@ h2{font-weight:600}
     <div class="sec-head">
       <p class="eyebrow">Город</p>
       <h2>Карта острова Nova Terra</h2>
-      <p class="lead">Нажмите на номер на карте или на объект в списке, и карта приблизится к нему. Слои помогают увидеть отдельные части экономики. Тёмные клетки по краям — участки, которые ещё не прогружены: карта будет расти вместе с островом.</p>
+      <p class="lead">Нажмите на номер на карте или на объект в списке, и карта приблизится к нему. В карточке объекта видно, кто там работает, что он получает и что даёт острову. Слои помогают увидеть отдельные части экономики. Тёмные клетки по краям — участки, которые ещё не прогружены: карта будет расти вместе с островом.</p>
     </div>
     <div class="city-grid">
       <div class="gui map">
-        <div class="map-tools"><div class="layers" id="layers" role="group" aria-label="Слои карты"></div><div class="zoom"><button class="zb" id="zIn" aria-label="Приблизить">+</button><button class="zb" id="zOut" aria-label="Отдалить">−</button><button class="zb" id="zReset" aria-label="Показать всю карту">⤢</button></div></div>
+        <div class="map-tools"><div class="layers" id="layers" role="group" aria-label="Слои карты"></div><div class="tools-r"><div class="layers" id="viewSw" role="group" aria-label="Вид карты"><button aria-pressed="true" data-v="top">Схема</button><button aria-pressed="false" data-v="iso">Изометрия</button></div><div class="zoom"><button class="zb" id="zIn" aria-label="Приблизить">+</button><button class="zb" id="zOut" aria-label="Отдалить">−</button><button class="zb" id="zReset" aria-label="Показать всю карту">⤢</button></div></div></div>
         <div class="map-view" id="mapView"><div class="tip" id="mapTip" hidden></div>
         <div class="map-inner map-stage" id="mapInner">
           <svg viewBox="0 0 1400 900" role="img" aria-label="Схема острова Nova Terra сверху: город, энергетическая зона с двумя АЭС и военной базой, ресурсная зона с угольной и нефтяной вышками и хранилищем, вокруг — непрогруженные участки" id="citySvg">
@@ -547,8 +718,9 @@ h2{font-weight:600}
             <g fill="#2F6B1E"><rect x="600" y="430" width="30" height="30"/><rect x="700" y="470" width="30" height="30"/><rect x="620" y="560" width="30" height="30"/><rect x="760" y="560" width="30" height="30"/></g>
           </g>
           </svg>
+          <canvas class="iso-canvas" id="isoCanvas" role="img" aria-label="Изометрический вид острова Nova Terra: здания показаны объёмными блоками"></canvas>
         </div></div>
-        <p class="map-hint">Перетаскивайте карту · кнопки или Ctrl + колесо — масштаб · двойной клик — приблизить</p>
+        <p class="map-hint">Перетаскивайте карту · кнопки или Ctrl + колесо — масштаб · двойной клик — приблизить · «Изометрия» показывает остров под углом</p>
       </div>
       <div class="side">
         <div class="px obj-card" id="objCard" aria-live="polite"></div>
@@ -661,6 +833,55 @@ h2{font-weight:600}
       </div>
       <div class="px sim-out" id="simOut" aria-live="polite"></div>
     </div>
+  </div>
+</section>
+<div class="strip planks"></div>
+
+<!-- 6b COUNCIL CABINET -->
+<section id="cabinet">
+  <div class="wrap">
+    <div class="sec-head">
+      <p class="eyebrow">Кабинет Совета · симулятор экономики</p>
+      <h2>Управляйте островом сами</h2>
+      <p class="lead">Меняйте условия и решения Совета — показатели пересчитаются сразу. Это учебная модель в условных единицах: она показывает связи в экономике, а не фактические данные Nova Terra.</p>
+    </div>
+    <div class="cab">
+      <div class="gui cab-ctl">
+        <p class="cab-h">УСЛОВИЯ НА ОСТРОВЕ</p>
+        <label class="sl"><span class="sl-top"><b>Население</b><output id="cv_n">750</output></span><input type="range" data-k="n" min="750" max="1050" step="50" value="750"><span class="sl-hint">Через 10 лет ожидается около 1 050 жителей (проектная оценка).</span></label>
+        <label class="sl"><span class="sl-top"><b>Урожайность полей</b><output id="cv_y">100%</output></span><input type="range" data-k="y" min="40" max="130" step="5" value="100"><span class="sl-hint">Зависит от погоды, почвы и севооборота.</span></label>
+        <p class="cab-h">РЕШЕНИЯ СОВЕТА</p>
+        <label class="sl"><span class="sl-top"><b>Общественные дни в неделю</b><output id="cv_d">1</output></span><input type="range" data-k="d" min="0" max="3" step="1" value="1"><span class="sl-hint" id="ch_d">Главный налог острова платится временем.</span></label>
+        <label class="sl"><span class="sl-top"><b>Доля урожая в резерв</b><output id="cv_r">20%</output></span><input type="range" data-k="r" min="0" max="50" step="5" value="20"><span class="sl-hint">Больше резерв — меньше еды на столе сегодня, но спокойнее в кризис.</span></label>
+        <label class="sl"><span class="sl-top"><b>Общественный труд на инфраструктуру</b><output id="cv_i">40%</output></span><input type="range" data-k="i" min="0" max="100" step="5" value="40"><span class="sl-hint">Остальное идёт на клинику, школу и водную службу.</span></label>
+        <label class="chk"><input type="checkbox" data-f="fH">Открыть резерв зерна</label>
+        <p class="cab-h">КРИЗИСЫ</p>
+        <div class="crisis">
+          <button class="cz" data-c="cH" aria-pressed="false"><span class="ico" data-ico="wheat"></span>Неурожай: −30%</button>
+          <button class="cz" data-c="cM" aria-pressed="false"><span class="ico" data-ico="pickaxe"></span>Шахта остановилась</button>
+          <label class="chk sub" data-for="cM" hidden><input type="checkbox" data-f="fM">Вторая профессия и ремонт вместо нового</label>
+          <button class="cz" data-c="cW" aria-pressed="false"><span class="ico" data-ico="reservoir"></span>Резервуар потерял 40% воды</button>
+          <label class="chk sub" data-for="cW" hidden><input type="checkbox" data-f="fW">Режим экономии воды</label>
+        </div>
+        <div class="cab-btns"><button class="btn" id="cabReset">Сбросить</button><button class="btn grass" id="cab10">Через 10 лет</button></div>
+      </div>
+      <div class="cab-out">
+        <div class="gui cab-kpis" id="cabKpis"></div>
+        <div class="px cab-warn" id="cabWarn" aria-live="polite"></div>
+      </div>
+    </div>
+    <details class="px cab-model">
+      <summary>Как считает модель</summary>
+      <ol>
+        <li>Рабочее время острова — 100 единиц на 750 жителей. Общественный труд = рабочее время × общественные дни ÷ 6: в неделе шесть рабочих дней и один свободный.</li>
+        <li>Общественный труд делится между инфраструктурой (нужно 6,7 ед.) и службами (нужно 10 ед. на 750 жителей). Остальное рабочее время идёт на поля, завод, стройку и рынок.</li>
+        <li>Урожай = 100 × урожайность × руки × вода × дороги. «Руки» — хватает ли работников на всю землю; «вода» — сколько воды дошло до полей; «дороги» — потери при плохой инфраструктуре, до 15%.</li>
+        <li>Еда на столе = урожай − доля в резерв (+ открытый резерв). Потребность — 80 единиц на 750 жителей. В хранилище лежит резерв прошлого года: обычный урожай × доля резерва.</li>
+        <li>Давление на цены = потребность ÷ еда на столе − 1.</li>
+        <li>Вода: запас 120 единиц. Сначала питьё (15), затем быт (25), остаток получают поля (нужно 60).</li>
+      </ol>
+      <p>Все числа — условные единицы. Модель упрощена, чтобы были видны связи между решениями и их альтернативная стоимость.</p>
+    </details>
   </div>
 </section>
 <div class="strip stone"></div>
@@ -799,7 +1020,14 @@ army:["GGGGGGGG","GggggggG","GggyyggG","GgyyyygG",".GggggG.",".GggggG.","..GggG.
 coal:["ssSsssSs","skksssSs","skkssSss","sssskkss","sSsskkSs","sskssssS","skkssSss","ssSsssss"],
 oil:[".dddddd.","dkkkkkkd","dddddddd","dkkkkkkd","dkkykkkd","dddddddd","dkkkkkkd",".dddddd."],
 rig:["...k....","..k.k...","..kkk...",".k.k.k..",".kk.kk..","k..k..k.","kkkkkkk.","nnnnnnnn"],
-city:["...S....","..SSS.r.","..SbS.rr",".rSSSrrr","rrSbSwww","wwSSSwbw","wwSbSwww","ssssssss"]
+city:["...S....","..SSS.r.","..SbS.rr",".rSSSrrr","rrSbSwww","wwSSSwbw","wwSbSwww","ssssssss"],
+fish:["........","..bbb..b",".bBBBbbb","bBkBBBb.",".bBBBbbb","..bbb..b","........","........"],
+fruit:["....g...","...n....","..rrrr..",".rRrrrr.",".rrrrrr.",".rrrrrr.","..rrrr..","........"],
+chair:["n.......","n.......","n.......","nnnnnn..","nNNNNn..","n....n..","n....n..","n....n.."],
+moon:["..YYY...",".YY.....","YY......","YY......","YY......",".YY...Y.","..YYYY..","........"],
+bank:["...yy...","..SSSS..",".SSSSSS.","ssssssss",".S.yy.S.",".S.yy.S.",".S.yy.S.","ssssssss"],
+clock:["..ssss..",".swwwws.","swwkwwws","swwkwwws","swwkkkws","swwwwwws",".swwwws.","..ssss.."],
+ration:["........",".nnnnnn.","nNNNNNNn","nNyNNgNn","nNNNNNNn","nNrNNwNn","nNNNNNNn",".nnnnnn."]
 };
 function svg(name){var m=IC[name];if(!m)return'';var h=m.length,w=m[0].length,o='<svg viewBox="0 0 '+w+' '+h+'" shape-rendering="crispEdges" aria-hidden="true">';for(var y=0;y<h;y++)for(var x=0;x<w;x++){var c=PAL[m[y][x]];if(c)o+='<rect x="'+x+'" y="'+y+'" width="1.02" height="1.02" fill="'+c+'"/>';}return o+'</svg>';}
 function paintIcons(root){(root||document).querySelectorAll('[data-ico]').forEach(function(el){el.innerHTML=svg(el.getAttribute('data-ico'));});}
@@ -815,6 +1043,9 @@ function rng(seed){return function(){seed|=0;seed=seed+0x6D2B79F5|0;var t=Math.i
 function vnoise(seed){var r=rng(seed),g=[];for(var i=0;i<64*64;i++)g.push(r());return function(x,y){var xi=Math.floor(x),yi=Math.floor(y),xf=x-xi,yf=y-yi;function v(a,b){return g[((b&63)*64)+(a&63)];}var s=function(t){return t*t*(3-2*t)};var a=v(xi,yi),b=v(xi+1,yi),c=v(xi,yi+1),d=v(xi+1,yi+1);var u=s(xf),w=s(yf);return a+(b-a)*u+(c-a)*w+(a-b-c+d)*u*w;};}
 function shade(hex,amt){var n=parseInt(hex.slice(1),16),r=(n>>16)+amt,g=(n>>8&255)+amt,b=(n&255)+amt;r=Math.max(0,Math.min(255,r));g=Math.max(0,Math.min(255,g));b=Math.max(0,Math.min(255,b));return'rgb('+r+','+g+','+b+')';}
 var reduce=window.matchMedia&&window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+/* NIGHT: 0 = day, 1 = night. tone() is shade() plus a blend towards night blue; glow cells (lit windows) skip the blend. */
+var NIGHT=0;
+function tone(hex,amt,glow){var n=parseInt(hex.slice(1),16),a=glow?0:NIGHT*0.64,r=((n>>16)+amt)*(1-a)+8*a,g=((n>>8&255)+amt)*(1-a)+16*a,b=((n&255)+amt)*(1-a)+44*a;return'rgb('+Math.max(0,Math.min(255,Math.round(r)))+','+Math.max(0,Math.min(255,Math.round(g)))+','+Math.max(0,Math.min(255,Math.round(b)))+')';}
 function island(canvas,opt){
   var ctx=canvas.getContext('2d'),cell=opt.cell||8,water=[],timer=null,cols,rows;
   function draw(){
@@ -822,12 +1053,12 @@ function island(canvas,opt){
     cols=Math.ceil(rect.width/cell);rows=Math.ceil(rect.height/cell);
     canvas.width=Math.round(cols*cell*dpr);canvas.height=Math.round(rows*cell*dpr);
     ctx.setTransform(dpr,0,0,dpr,0,0);ctx.imageSmoothingEnabled=false;
-    var nz=vnoise(opt.seed||7),r=rng(opt.seed||7);water=[];
+    var nz=vnoise(opt.seed||7),r=rng(opt.seed||7),lr=rng(97);water=[];
     var narrow=rect.width<700;
     var cx=cols*(narrow?0.5:opt.cx),cy=rows*0.52,rx=cols*(narrow?0.46:opt.rx),ry=rows*0.42;
     for(var y=0;y<rows;y++)for(var x=0;x<cols;x++){
       var u=(x-cx)/rx,v=(y-cy)/ry,n=nz(x*0.12,y*0.12)*0.5+nz(x*0.3,y*0.3)*0.25;
-      var d=u*u+v*v+(n-0.37)*0.55,col,j=Math.floor(r()*14)-7;
+      var d=u*u+v*v+(n-0.37)*0.55,col,j=Math.floor(r()*14)-7,bcol=null,lv=lr();
       if(d>=1.25){col=d>1.9?'#1E4FA6':'#2C62C4';water.push([x,y,col]);}
       else if(d>=1.0){col='#4F8BE6';water.push([x,y,col]);}
       else if(d>=0.86){col='#DCCB92';}
@@ -840,7 +1071,7 @@ function island(canvas,opt){
         if(u>=-0.26&&u<-0.12&&v>0.38&&v<0.6)col=(y%3===0)?'#7A5230':'#A0703A';
         var townU=u>0.0&&u<0.8&&v>-0.68&&v<0.5;
         if(townU){var bx=Math.floor((u+1)*14),by=Math.floor((v+1)*9);
-          if(((bx%3)!==0)&&((by%3)!==0)){var pal=['#CBBE9A','#8B3A2B','#2E2E2E','#DAD5C8','#E2D2A6','#C8423A','#B5AC95'];col=pal[(bx*7+by*3)%pal.length];}
+          if(((bx%3)!==0)&&((by%3)!==0)){var pal=['#CBBE9A','#8B3A2B','#2E2E2E','#DAD5C8','#E2D2A6','#C8423A','#B5AC95'];col=pal[(bx*7+by*3)%pal.length];bcol=col;}
           else col='#6E6E6A';}
         if(Math.abs(u-0.38)<0.035&&v>-0.95&&v<0.95)col='#3A3A3A';
         if(Math.abs(v+0.05)<0.05&&u>-0.15&&u<0.85)col='#3A3A3A';
@@ -848,13 +1079,15 @@ function island(canvas,opt){
         if(u>0.66&&u<0.72&&v>-0.55&&v<-0.25)col='#3C5A63';
         if(col==='#5DA130'&&r()<0.09)col='#2F6B1E';
       }
-      ctx.fillStyle=col.charAt(0)==='#'?shade(col,j):col;ctx.fillRect(x*cell,y*cell,cell,cell);
+      var lit=bcol&&col===bcol&&NIGHT>0.55&&lv<0.24;
+      ctx.fillStyle=lit?'#FBE38A':tone(col,j);ctx.fillRect(x*cell,y*cell,cell,cell);
     }
   }
   function sparkle(){
     if(!water.length)return;
-    for(var i=0;i<10;i++){var w=water[Math.floor(Math.random()*water.length)];ctx.fillStyle=Math.random()<0.5?'#9CC0F5':w[2];ctx.fillRect(w[0]*cell,w[1]*cell,cell,cell);}
+    for(var i=0;i<10;i++){var w=water[Math.floor(Math.random()*water.length)];ctx.fillStyle=tone(Math.random()<0.5?'#9CC0F5':w[2],0);ctx.fillRect(w[0]*cell,w[1]*cell,cell,cell);}
   }
+  canvas._draw=draw;
   draw();
   var t;window.addEventListener('resize',function(){clearTimeout(t);t=setTimeout(draw,150);});
   if(!reduce)timer=setInterval(sparkle,140);
@@ -943,20 +1176,50 @@ var OBJ=[
  ['oil','Нефтяная вышка','Oil Rig','oil',[[100,560]],'Добыча ресурсов','Добывает нефть — топливо и сырьё. Как и уголь, нефть не восстанавливается.','res'],
  ['storage','Хранилище ресурсов','Resource Storage','chest',[[256,700]],'Инфраструктура','Хранит добытые ресурсы, чтобы у острова был запас на трудные времена.','infra']
 ];
+/* object facts: who works there, what it takes in, what it gives, the economics concept it shows, linked objects */
+var OBJX={
+ fields:['Фермеры','Земля, вода из резервуаров, труд, комбайн','Пшеница и овощи: еда и сырьё для завода','Факторы производства: земля',['res','mill','market']],
+ res:['Водные смотрители','Источники пресной воды','Вода для питья, быта и полей','Базовые потребности: вода для каждого',['fields','houses']],
+ police:['Служба порядка (общественная служба)','Общественный труд жителей, правила Совета','Соблюдение лимитов, штрафы в Terra Coin','Смешанная экономика: роль государства',['hall','market']],
+ apart:['Строители: строят и ремонтируют','Камень и руда из шахт, труд','Жильё для многих семей','Дефицит земли и выбор: строим вверх',['mines','tower']],
+ houses:['Строители; дальше за домом следит семья','Участок по жребию, материалы из шахт','Дом в частной собственности','Рыночная сторона: частная собственность',['mines','res']],
+ tower:['Строители и техники','Камень, руда, энергия АЭС','Жильё на малом участке земли','Альтернативная стоимость земли',['apart','fields']],
+ shops:['Продавцы','Мука и товары с завода и из мастерских','Товары за Terra Coin','Три вопроса экономики: для кого производить',['mill','market']],
+ mines:['Строители и мастера инструментов','Труд, инструменты, энергия','Камень и руда для домов и инструментов','Капитал: из сырья делают инструменты',['apart','storage']],
+ hall:['Совет острова: 9 выборных членов','Голоса всех взрослых жителей','Правила для земли, воды и денег','Экономическая система: смешанная',['ministers','police']],
+ ministers:['Министры и служащие','Решения Совета, общественный труд','Работа клиники, школы и водной службы','Государственная сторона экономики',['hall','clinic']],
+ market:['Фермеры, рыбаки, ремесленники, повара','Излишки с огородов, улов, изделия','Свободная торговля за Terra Coin','Рыночная сторона: выбор покупателя',['shops','fields']],
+ road:['Строители в общественный день','Камень из шахт, общественный труд','Доставка сырья и товаров','Капитал: инфраструктура',['mines','market']],
+ clinic:['Лекари','Общественный труд, инструменты, энергия','Бесплатная медицина для всех','Базовые потребности: здоровье',['ministers']],
+ gardens:['Жители по очереди в общественный день','Земля и вода','Отдых и чистая природа','Альтернативная стоимость: здесь нет полей и домов',['res']],
+ offices:['Служащие сферы услуг','Труд и энергия','Услуги и управление','Факторы производства: труд',['npp']],
+ mill:['Техники и работники завода','Пшеница с полей, энергия АЭС','Мука для рынка и магазинов','Добавленная стоимость',['fields','npp','shops']],
+ npp:['Техники','Обученные специалисты, строгие правила безопасности','Электроэнергия для завода, мастерских и домов','Капитал: энергия для производства',['mill','houses']],
+ military:['Защитники острова','Люди и ресурсы, снятые с производства','Безопасность острова','Альтернативная стоимость: «пушки или масло»',['hall']],
+ coal:['Техники','Труд и инструменты','Уголь для хранилища','Дефицит: ресурс не восстанавливается',['storage']],
+ oil:['Техники','Труд и инструменты','Нефть для хранилища','Дефицит: ресурс не восстанавливается',['storage']],
+ storage:['Кладовщики (общественная служба)','Уголь, нефть и сырьё с вышек и шахт','Запас на трудные времена','Выбор: потратить сейчас или сберечь',['coal','oil','mines']]
+};
+function objIndex(id){for(var i=0;i<OBJ.length;i++)if(OBJ[i][0]===id)return i;return -1;}
+function objFacts(id){var x=OBJX[id];if(!x)return'';
+  var h='<div class="obj-facts"><div class="fact"><b>Кто работает</b>'+x[0]+'</div><div class="fact"><b>Получает</b>'+x[1]+'</div><div class="fact"><b>Даёт острову</b>'+x[2]+'</div><div class="fact"><b>Понятие экономики</b>'+x[3]+'</div></div><div class="obj-links"><span>Связан с:</span>';
+  x[4].forEach(function(l){var j=objIndex(l);if(j>=0)h+='<button data-go="'+j+'">'+(j+1)+'. '+OBJ[j][1]+'</button>';});
+  return h+'</div>';}
 var MW=1400,MH=900;
 var mapView=document.getElementById('mapView'),stage=document.getElementById('mapInner'),card=document.getElementById('objCard'),list=document.getElementById('objList'),tip=document.getElementById('mapTip');
 var pinEls=[];
 OBJ.forEach(function(o,i){o[4].forEach(function(pt){
-  var p=document.createElement('button');p.className='pin';p.textContent=i+1;p.style.left=(pt[0]/MW*100)+'%';p.style.top=(pt[1]/MH*100)+'%';p.setAttribute('aria-label',(i+1)+'. '+o[1]);p.dataset.i=i;stage.appendChild(p);pinEls.push(p);});});
+  var p=document.createElement('button');p.className='pin';p.textContent=i+1;p.style.left=(pt[0]/MW*100)+'%';p.style.top=(pt[1]/MH*100)+'%';p.setAttribute('aria-label',(i+1)+'. '+o[1]);p.dataset.i=i;p._pt=pt;p._id=o[0];stage.appendChild(p);pinEls.push(p);});});
 function renderList(){var h='';LAYERS.slice(1).forEach(function(L){h+='<div class="grp">'+L[1]+'</div>';OBJ.forEach(function(o,i){if(o[7]===L[0])h+='<button data-i="'+i+'"><span class="n">'+(i+1)+'</span>'+o[1]+'</button>';});});list.innerHTML=h;}
 renderList();
 var cur=-1;
 function selectObj(i,fly){var o=OBJ[i];cur=i;
-  card.innerHTML='<div class="row">'+ico(o[3])+'<div><h3>'+o[1]+'</h3><div class="en">'+o[2]+' · '+(i+1)+' / '+OBJ.length+'</div></div></div><span class="tag est" style="justify-self:start">'+o[5]+'</span><p>'+o[6]+'</p>';
+  card.innerHTML='<div class="row">'+ico(o[3])+'<div><h3>'+o[1]+'</h3><div class="en">'+o[2]+' · '+(i+1)+' / '+OBJ.length+'</div></div></div><span class="tag est" style="justify-self:start">'+o[5]+'</span><p>'+o[6]+'</p>'+objFacts(o[0]);
   pinEls.forEach(function(p){p.classList.toggle('on',+p.dataset.i===i)});
   list.querySelectorAll('button').forEach(function(b){b.classList.toggle('on',+b.dataset.i===i)});
   document.querySelectorAll('#citySvg .b').forEach(function(g){g.classList.toggle('on',g.dataset.id===o[0])});
-  if(fly){var pts=o[4],cx=0,cy=0;pts.forEach(function(p){cx+=p[0];cy+=p[1]});flyTo(cx/pts.length,cy/pts.length,pts.length>1?1.6:2.2);}
+  if(isoOn)isoDraw();
+  if(fly){var pts=o[4],cx=0,cy=0;pts.forEach(function(p){cx+=p[0];cy+=p[1]});cx/=pts.length;cy/=pts.length;if(isoOn){var q=isoP(cx,cy,0);cx=q[0];cy=q[1];}flyTo(cx,cy,pts.length>1?1.6:2.2);}
 }
 /* zoom & pan */
 var Z={z:1,x:0,y:0};
@@ -1073,6 +1336,271 @@ var QZ=[
     var w=qd.querySelector('.why');w.hidden=false;w.textContent=(j===q[2]?'Верно! ':'Не совсем. ')+q[3];
     document.getElementById('qScore').textContent=score+' / '+QZ.length+(done===QZ.length?(score===QZ.length?' · отлично!':' · попробуй ещё раз'):'');});
   box.addEventListener('click',function(e){if(e.target.id!=='qReset')return;score=0;done=0;box.querySelectorAll('.opt').forEach(function(o){o.disabled=false;o.classList.remove('ok','bad')});box.querySelectorAll('.why').forEach(function(w){w.hidden=true});document.getElementById('qScore').textContent='0 / '+QZ.length;});
+})();
+
+/* ================= v2 ================= */
+/* ---------- loading screen: the coin is built block by block ---------- */
+(function(){var boot=document.getElementById('boot');if(!boot)return;
+  var m=IC.bigcoin,bc=document.getElementById('bootCoin'),h='';
+  if(m&&bc){for(var y=0;y<m.length;y++)for(var x=0;x<m[y].length;x++){var ch=m[y][x],c=ch==='k'?'#8A5A00':PAL[ch];h+='<i style="'+(c?'background:'+c+';':'')+'animation-delay:'+((m.length-1-y)*0.06+Math.random()*0.12).toFixed(2)+'s"></i>';}bc.innerHTML=h;}
+  function kill(){if(boot.parentNode)boot.parentNode.removeChild(boot);}
+  boot.addEventListener('click',kill);setTimeout(kill,2500);
+})();
+
+/* ---------- map: linked objects in the card ---------- */
+card.addEventListener('click',function(e){var b=e.target.closest('[data-go]');if(b)selectObj(+b.dataset.go,true);});
+
+/* ---------- isometric view: the same island as blocks on a canvas ---------- */
+var isoC=document.getElementById('isoCanvas'),isoX=isoC.getContext('2d'),isoOn=false,isoHit=[],isoOrd=null,isoTick=0,isoVis=true;
+var IS=MW/(MW+MH),IOX=MH*IS,IOY=(MH-(MW+MH)*IS/2)/2;
+function isoP(x,y,z){return[IOX+(x-y)*IS,IOY+(x+y)*IS/2-(z||0)*IS];}
+/* flat ground: [object id or null, x, y, w, h, colour, stripe colour] in map units */
+var IFLAT=[
+ [null,330,0,900,232,'#5DA130'],[null,0,250,332,620,'#5DA130'],[null,330,230,1040,640,'#5DA130'],
+ [null,630,0,30,870,'#3A3A3A'],[null,20,446,312,14,'#8B6A43'],[null,660,334,510,44,'#6E6E6A'],[null,1210,230,160,640,'#B8B4AA'],
+ ['road',1170,230,40,640,'#3A3A3A'],
+ ['fields',1124,8,102,216,'#D9BE52','#C9A63E'],['fields',340,390,134,120,'#D9BE52','#C9A63E'],['fields',490,390,134,120,'#86BF45','#E8913A'],['fields',340,526,134,120,'#86BF45','#E8913A'],['fields',490,526,134,120,'#D9BE52','#C9A63E'],
+ [null,474,374,16,272,'#3F76E4'],[null,340,510,284,16,'#3F76E4'],
+ ['gardens',1220,576,136,282,'#CFE0B8']
+];
+/* blocks: [object id or null, x, y, w, h, z0, z1, wall colour, roof colour, has windows] */
+var IBOX=[
+ ['npp',364,28,232,182,0,5,'#8E8A80'],['npp',384,48,80,88,5,74,'#D9D5CB','#F3F3F0'],['npp',492,48,80,88,5,74,'#D9D5CB','#F3F3F0'],['npp',380,152,200,50,5,28,'#4A4A4A','#6E6E6A',1],
+ ['npp',674,28,232,182,0,5,'#8E8A80'],['npp',694,48,80,88,5,74,'#D9D5CB','#F3F3F0'],['npp',802,48,80,88,5,74,'#D9D5CB','#F3F3F0'],['npp',690,152,200,50,5,28,'#4A4A4A','#6E6E6A',1],
+ ['military',930,26,178,184,0,4,'#8B8B6A'],['military',944,40,64,40,4,22,'#556B2F',null,1],['military',1020,40,74,40,4,22,'#556B2F',null,1],['military',944,104,64,64,4,7,'#4A4A4A','#5A5A5A'],
+ ['military',924,20,18,18,0,34,'#6B4A2B'],['military',1096,20,18,18,0,34,'#6B4A2B'],['military',924,198,18,18,0,34,'#6B4A2B'],['military',1096,198,18,18,0,34,'#6B4A2B'],
+ ['coal',24,270,152,160,0,4,'#5E5E5A'],['coal',62,300,52,80,4,70,'#2A2622','#3A3A3A'],['coal',126,356,44,44,4,18,'#1C1C1C','#2A2A2A'],
+ ['oil',24,478,152,164,0,4,'#A8977A'],['oil',66,516,40,56,4,58,'#2A2622','#C8423A'],['oil',36,604,24,30,4,24,'#2E2E2E','#4A4A4A'],['oil',66,604,24,30,4,24,'#2E2E2E','#4A4A4A'],['oil',96,604,24,30,4,24,'#2E2E2E','#4A4A4A'],
+ ['storage',190,620,132,224,0,4,'#B8B4AA'],['storage',194,624,124,140,4,40,'#A0703A','#7A5230'],['storage',198,782,30,30,4,18,'#C9A26B'],['storage',234,782,30,30,4,18,'#C9A26B'],['storage',270,782,30,30,4,18,'#C9A26B'],
+ ['res',346,246,278,128,0,8,'#8A8A86','#3F76E4'],['res',346,790,134,68,0,8,'#8A8A86','#3F76E4'],
+ ['mill',350,664,126,106,0,40,'#A0703A','#C9A26B',1],['mill',428,680,14,16,40,66,'#5E3E22'],
+ ['mines',494,660,130,196,0,24,'#8A8A86','#9E9E9A'],['mines',530,730,56,48,24,30,'#1C1C1C'],
+ ['apart',680,250,300,70,0,50,'#CBBE9A','#B5AC95',1],
+ ['houses',1000,246,64,78,0,24,'#5A5A5A','#2E2E2E',1],['houses',1074,246,76,78,0,26,'#B5654F','#8B3A2B',1],
+ ['hall',690,400,170,110,0,42,'#E2D2A6','#F0E6C8',1],['ministers',886,400,160,100,0,36,'#D8D2C4','#C2BBAA',1],['shops',1070,390,80,120,0,22,'#F3EEDC','#C8423A',1],
+ ['clinic',900,540,104,78,0,28,'#F3F3F0','#E6F4F7',1],['police',1030,540,120,78,0,24,'#DAD5C8','#2E4FA0',1],['market',710,690,170,100,0,14,'#C9A26B','#C8423A'],
+ ['tower',1224,250,128,172,0,22,'#8B4A2B','#A85E3A',1],['tower',1236,262,104,80,22,150,'#EDE7DA','#9A958A',1],['offices',1224,440,128,120,0,40,'#DAD5C8','#4A6A80',1],
+ ['gardens',1234,590,108,14,0,8,'#3E8A2A'],['gardens',1234,622,46,46,0,10,'#3E8A2A'],['gardens',1296,622,46,46,0,10,'#3E8A2A'],['gardens',1234,720,46,46,0,10,'#3E8A2A'],['gardens',1296,720,46,46,0,10,'#3E8A2A'],['gardens',1234,820,108,14,0,8,'#3E8A2A'],
+ [null,930,660,30,30,0,30,'#2F6B1E'],[null,1030,700,30,30,0,30,'#2F6B1E'],[null,950,790,30,30,0,30,'#2F6B1E'],[null,1090,790,30,30,0,30,'#2F6B1E']
+];
+var LAMPS=[[700,330],[810,330],[920,330],[1030,330],[1140,330],[1166,270],[1166,400],[1166,530],[1166,660],[1166,790],[664,60],[664,180],[664,420],[664,560],[664,700],[664,840]];
+function inPoly(x,y,p){var c=false;for(var i=0,j=p.length-1;i<p.length;j=i++){if((p[i][1]>y)!==(p[j][1]>y)&&x<(p[j][0]-p[i][0])*(y-p[i][1])/(p[j][1]-p[i][1])+p[i][0])c=!c;}return c;}
+/* back-to-front order: a block is drawn before another if it lies behind it; stacked blocks go bottom first */
+function isoOrder(){if(isoOrd)return isoOrd;var rem=IBOX.slice(),out=[];
+  function before(a,b){var ax=a[1]+a[3]<=b[1],ay=a[2]+a[4]<=b[2],bx=b[1]+b[3]<=a[1],by=b[2]+b[4]<=a[2];
+    if(!ax&&!ay&&!bx&&!by)return a[5]<b[5];
+    return(ax||ay)&&!(bx||by);}
+  while(rem.length){var pick=-1;for(var i=0;i<rem.length&&pick<0;i++){var free=true;for(var j=0;j<rem.length;j++){if(i!==j&&before(rem[j],rem[i])){free=false;break;}}if(free)pick=i;}
+    if(pick<0)pick=0;out.push(rem.splice(pick,1)[0]);}
+  return isoOrd=out;}
+function isoPoly(p,fill,stroke){isoX.beginPath();isoX.moveTo(p[0][0],p[0][1]);for(var i=1;i<p.length;i++)isoX.lineTo(p[i][0],p[i][1]);isoX.closePath();if(fill){isoX.fillStyle=fill;isoX.fill();}if(stroke){isoX.strokeStyle=stroke;isoX.lineWidth=3.5;isoX.lineJoin='round';isoX.stroke();}}
+function isoWin(p,lit){isoPoly(p,NIGHT>0.55?(lit?'#FBE38A':'#141E2A'):'rgba(34,52,70,.6)');}
+function isoDraw(){
+  var w=stage.clientWidth;if(!w)return;
+  var dpr=Math.min(window.devicePixelRatio||1,2),pw=Math.min(2600,Math.round(w*dpr*1.6));
+  if(isoC.width!==pw){isoC.width=pw;isoC.height=Math.round(pw*MH/MW);}
+  var k=isoC.width/MW,X=isoX;X.setTransform(k,0,0,k,0,0);X.globalAlpha=1;
+  X.fillStyle=tone('#141D21',0);X.fillRect(0,0,MW,MH);
+  isoPoly([isoP(0,0),isoP(MW,0),isoP(MW,MH),isoP(0,MH)],tone('#1F2C32',0));
+  isoHit=[];var selId=cur>=0?OBJ[cur][0]:null,selP=[];
+  function dim(id){return activeLayer!=='all'&&(!id||layerOf(id)!==activeLayer);}
+  IFLAT.forEach(function(f){var x=f[1],y=f[2],fw=f[3],fh=f[4],p=[isoP(x,y),isoP(x+fw,y),isoP(x+fw,y+fh),isoP(x,y+fh)];
+    X.globalAlpha=f[0]&&dim(f[0])?0.3:1;isoPoly(p,tone(f[5],0));
+    if(f[6])for(var s=y+6;s<y+fh-4;s+=14)isoPoly([isoP(x,s),isoP(x+fw,s),isoP(x+fw,s+5),isoP(x,s+5)],tone(f[6],0));
+    X.globalAlpha=1;
+    if(f[0]){if(f[0]===selId)selP.push(p);isoHit.push({i:objIndex(f[0]),p:p});}});
+  isoOrder().forEach(function(b,n){var x=b[1],y=b[2],bw=b[3],bh=b[4],z0=b[5],z1=b[6],c=b[7],i,j,z,u;
+    X.globalAlpha=dim(b[0])?(b[0]?0.28:0.5):1;
+    isoPoly([isoP(x,y+bh,z1),isoP(x+bw,y+bh,z1),isoP(x+bw,y+bh,z0),isoP(x,y+bh,z0)],tone(c,-30));
+    isoPoly([isoP(x+bw,y,z1),isoP(x+bw,y+bh,z1),isoP(x+bw,y+bh,z0),isoP(x+bw,y,z0)],tone(c,-58));
+    isoPoly([isoP(x,y,z1),isoP(x+bw,y,z1),isoP(x+bw,y+bh,z1),isoP(x,y+bh,z1)],tone(b[8]||c,0));
+    if(b[9]&&z1-z0>=16){var rows=Math.floor((z1-z0-4)/14),nx=Math.floor((bw-6)/16),ny=Math.floor((bh-6)/16);
+      for(j=0;j<rows;j++){z=z0+5+j*14;
+        for(i=0;i<nx;i++){u=x+7+i*16;isoWin([isoP(u,y+bh,z+8),isoP(u+8,y+bh,z+8),isoP(u+8,y+bh,z),isoP(u,y+bh,z)],(i*7+j*13+n*3)%5<2);}
+        for(i=0;i<ny;i++){u=y+7+i*16;isoWin([isoP(x+bw,u,z+8),isoP(x+bw,u+8,z+8),isoP(x+bw,u+8,z),isoP(x+bw,u,z)],(i*5+j*11+n*3)%5<2);}}}
+    X.globalAlpha=1;
+    if(b[0]){var sil=[isoP(x,y,z1),isoP(x+bw,y,z1),isoP(x+bw,y,z0),isoP(x+bw,y+bh,z0),isoP(x,y+bh,z0),isoP(x,y+bh,z1)];if(b[0]===selId)selP.push(sil);isoHit.push({i:objIndex(b[0]),p:sil});}});
+  /* steam over the cooling towers */
+  IBOX.forEach(function(b){if(b[0]!=='npp'||b[6]!==74)return;var cx=b[1]+b[3]/2,cy=b[2]+b[4]/2;
+    for(var q=0;q<3;q++){var f=(isoTick*0.06+q/3)%1,pp=isoP(cx,cy,78+f*70),sz=12+f*14;X.globalAlpha=(1-f)*0.6*(dim('npp')?0.3:1);X.fillStyle=tone('#FFFFFF',0);X.fillRect(pp[0]-sz/2,pp[1]-sz/2,sz,sz);}});
+  X.globalAlpha=1;
+  /* street lamps: posts by day, light by night */
+  LAMPS.forEach(function(l){var top=isoP(l[0],l[1],16),base=isoP(l[0],l[1],0);X.fillStyle=tone('#2A2622',0);X.fillRect(top[0]-1,top[1],2,base[1]-top[1]);
+    if(NIGHT>0.05){var g=X.createRadialGradient(top[0],top[1],0,top[0],top[1],30);g.addColorStop(0,'rgba(251,227,138,'+(0.55*NIGHT).toFixed(2)+')');g.addColorStop(1,'rgba(251,227,138,0)');X.fillStyle=g;X.fillRect(top[0]-30,top[1]-30,60,60);X.globalAlpha=NIGHT;X.fillStyle='#FBE38A';X.fillRect(top[0]-2.5,top[1]-2.5,5,5);X.globalAlpha=1;}});
+  selP.forEach(function(p){isoPoly(p,null,'#F2B53A');});
+}
+function isoPick(e){var r=isoC.getBoundingClientRect(),px=(e.clientX-r.left)/r.width*MW,py=(e.clientY-r.top)/r.height*MH;for(var i=isoHit.length-1;i>=0;i--)if(inPoly(px,py,isoHit[i].p))return isoHit[i].i;return -1;}
+isoC.addEventListener('mousemove',function(e){var idx=isoPick(e);isoC.style.cursor=idx>=0?'pointer':'';if(idx<0){tip.hidden=true;return;}
+  var r=mapView.getBoundingClientRect();tip.hidden=false;tip.textContent=(idx+1)+'. '+OBJ[idx][1];var x=e.clientX-r.left+14,y=e.clientY-r.top+14;if(x>r.width-200)x=e.clientX-r.left-tip.offsetWidth-10;tip.style.left=x+'px';tip.style.top=y+'px';});
+isoC.addEventListener('mouseleave',function(){tip.hidden=true;});
+isoC.addEventListener('click',function(e){var idx=isoPick(e);if(idx>=0)selectObj(idx,false);});
+function pinZ(p){var z=0;IBOX.forEach(function(b){if(b[0]===p._id&&p._pt[0]>=b[1]&&p._pt[0]<=b[1]+b[3]&&p._pt[1]>=b[2]&&p._pt[1]<=b[2]+b[4])z=Math.max(z,b[6]);});return z;}
+function placePins(){pinEls.forEach(function(p){var q=isoOn?isoP(p._pt[0],p._pt[1],pinZ(p)):p._pt;p.style.left=(q[0]/MW*100)+'%';p.style.top=(q[1]/MH*100)+'%';});}
+var viewSw=document.getElementById('viewSw');
+function setView(iso){isoOn=iso;stage.classList.toggle('iso',iso);viewSw.querySelectorAll('button').forEach(function(b){b.setAttribute('aria-pressed',(b.dataset.v==='iso')===iso);});placePins();Z={z:1,x:0,y:0};apply(true);tip.hidden=true;if(iso)isoDraw();}
+viewSw.addEventListener('click',function(e){var b=e.target.closest('button');if(b)setView(b.dataset.v==='iso');});
+layerEl.addEventListener('click',function(){if(isoOn)isoDraw();});
+var isoRT;window.addEventListener('resize',function(){clearTimeout(isoRT);isoRT=setTimeout(function(){if(isoOn)isoDraw();},160);});
+if('IntersectionObserver' in window){new IntersectionObserver(function(es){isoVis=es[es.length-1].isIntersecting;}).observe(mapView);}
+if(!reduce)setInterval(function(){if(isoOn&&isoVis){isoTick++;isoDraw();}},170);
+
+/* ---------- day and night ---------- */
+/* top-view map: a night shade plus street lamps and lit buildings, shown by the body.night class */
+(function(){var s=document.getElementById('citySvg'),NS='http://www.w3.org/2000/svg';
+  function el(n,a,p){var e=document.createElementNS(NS,n);for(var k in a)e.setAttribute(k,a[k]);p.appendChild(e);return e;}
+  var gr=el('radialGradient',{id:'glow'},s.querySelector('defs'));el('stop',{offset:'0','stop-color':'#FBE38A','stop-opacity':'.8'},gr);el('stop',{offset:'1','stop-color':'#FBE38A','stop-opacity':'0'},gr);
+  el('rect',{'class':'nshade',width:MW,height:MH,fill:'#071230',opacity:0,'pointer-events':'none'},s);
+  var g=el('g',{'class':'lamps',opacity:0,'pointer-events':'none'},s);
+  LAMPS.forEach(function(p){el('circle',{cx:p[0],cy:p[1],r:38,fill:'url(#glow)'},g);el('rect',{x:p[0]-4,y:p[1]-4,width:8,height:8,fill:'#FBE38A'},g);});
+  IBOX.forEach(function(b){if(!b[9])return;[0.3,0.7].forEach(function(f){var x=b[1]+b[3]*f,y=b[2]+b[4]*0.5;el('circle',{cx:x,cy:y,r:24,fill:'url(#glow)',opacity:.7},g);el('rect',{x:x-4,y:y-4,width:8,height:8,fill:'#FBE38A'},g);});});
+})();
+var dnBtn=document.getElementById('dnBtn'),heroCv=document.getElementById('heroIsland'),finalCv=document.getElementById('finalIsland'),nightTimer=0;
+function nightPaint(){heroCv._draw();finalCv._draw();if(isoOn)isoDraw();}
+function setNight(on){var to=on?1:0,from=NIGHT,n=0,steps=reduce?1:18;
+  document.body.classList.toggle('night',on);dnBtn.setAttribute('aria-pressed',on);dnBtn.innerHTML=ico(on?'moon':'sun')+'<span class="t">'+(on?'Ночь':'День')+'</span>';
+  clearInterval(nightTimer);
+  function step(){n++;NIGHT=from+(to-from)*n/steps;nightPaint();if(n>=steps)clearInterval(nightTimer);}
+  if(steps===1)step();else nightTimer=setInterval(step,75);}
+dnBtn.addEventListener('click',function(){setNight(!document.body.classList.contains('night'));});
+/* slight camera movement over the hero island */
+(function(){var hero=document.querySelector('.hero'),cl=document.getElementById('heroClouds');if(reduce||!hero||!cl)return;
+  hero.addEventListener('mousemove',function(e){var r=hero.getBoundingClientRect(),px=(e.clientX-r.left)/r.width-0.5,py=(e.clientY-r.top)/r.height-0.5;
+    heroCv.style.transform='translate('+(-px*14).toFixed(1)+'px,'+(-py*10).toFixed(1)+'px)';cl.style.transform='translate('+(-px*30).toFixed(1)+'px,'+(-py*20).toFixed(1)+'px)';});
+  hero.addEventListener('mouseleave',function(){heroCv.style.transform='';cl.style.transform='';});})();
+
+/* ---------- Saturday market: buy something with Terra Coin ---------- */
+(function(){var shelf=document.getElementById('mkShelf'),side=document.getElementById('mkSide');if(!shelf||!side)return;
+  /* id, icon, name, price in T, kind, producer */
+  var G=[['ration','ration','Базовый паёк',0,'free'],['bread','bread','Хлеб',3,'proc'],['flour','flour','Мука, 1 кг',2,'proc'],['fish','fish','Рыба',4,'raw','рыбак'],['fruit','fruit','Фрукты',2,'raw','фермер'],['tool','hammer','Инструмент',15,'craft'],['chair','chair','Стул',12,'craft'],['repair','gear','Ремонт вещи',5,'serv']];
+  /* where the price goes; "proc" uses the same shares as the value-added bars in the industry section (40 : 30 : 18) */
+  var SPLIT={proc:[['Сырьё · фермер',45,'#E0C35A'],['Переработка · завод',34,'#5DA130'],['Торговля · продавец',21,'#3F76E4']],
+    raw:[['Производитель',80,'#E0C35A'],['Торговля · продавец',20,'#3F76E4']],
+    craft:[['Сырьё · шахта',30,'#E0C35A'],['Работа мастера',50,'#5DA130'],['Торговля · продавец',20,'#3F76E4']],
+    serv:[['Работа мастера',100,'#5DA130']]};
+  var START='В кошельке 40 Terra Coin — условная зарплата за неделю. Выберите товар на прилавке.',st;
+  function fresh(){st={w:40,dep:0,cnt:{},last:null,msg:START,lvl:''};}
+  function T(n){return String(Math.round(n*100)/100).replace('.',',')+' T';}
+  function say(m,l){st.msg=m;st.lvl=l||'';}
+  function render(){
+    shelf.innerHTML=G.map(function(g,i){var n=st.cnt[g[0]]||0;return'<button class="mk-item" data-i="'+i+'">'+(n?'<span class="cnt">×'+n+'</span>':'')+ico(g[1])+'<b>'+g[2]+'</b><span class="pr">'+(g[3]?ico('coin')+g[3]+' T':'бесплатно')+'</span></button>';}).join('');
+    var h='<div class="wallet">'+ico('coin')+'<div><span>В кошельке</span><br><b>'+T(st.w)+'</b></div>'+(st.dep?'<div><span>Вклад в Банке</span><br><b>'+T(st.dep)+'</b></div>':'')+'</div><div class="mk-msg '+st.lvl+'">'+st.msg+'</div>';
+    if(st.last){var g=st.last,bar='',li='';
+      SPLIT[g[4]].forEach(function(s){var lbl=s[0]==='Производитель'?'Производитель · '+g[5]:s[0];bar+='<i style="width:'+s[1]+'%;background:'+s[2]+'"></i>';li+='<li><span><i style="background:'+s[2]+'"></i>'+lbl+'</span><b>'+T(g[3]*s[1]/100)+'</b></li>';});
+      h+='<div class="split"><b>Куда ушли '+T(g[3])+' за «'+g[2]+'»</b><div class="bar">'+bar+'</div><ul>'+li+'</ul><p>Эти монеты станут зарплатами и снова придут на рынок. Налог с покупки — 0 T: главный налог острова платится временем.'+(g[4]==='proc'?' Доли — как в схеме добавленной стоимости в разделе «Промышленность».':'')+'</p></div>';}
+    h+='<div class="mk-btns"><button class="sbtn" data-a="day">Рабочий день: +8 T</button><button class="sbtn" data-a="hard">Смена на компосте: +16 T</button><button class="sbtn" data-a="pub">Общественный день: +0 T</button><button class="sbtn" data-a="bank">Положить в Банк</button><button class="sbtn" data-a="reset">Начать заново</button></div>';
+    h+='<p class="fine">Кошелёк, зарплата и цены — условный пример: настоящие цены и зарплаты на острове не определены. Якорь один: 1 Terra Coin = 1 кг зерна.</p>';
+    side.innerHTML=h;}
+  function buy(i){var g=G[i],n=st.cnt[g[0]]||0;
+    if(g[4]==='free'){if(n){say('Паёк на сегодня уже получен. Он бесплатный, но один на человека в день — так хватает всем.','mid');}else{st.cnt[g[0]]=1;st.last=null;say('Базовый паёк получен бесплатно: еда гарантирована каждому жителю. Всё сверх пайка покупается за Terra Coin.','ok');}return;}
+    if((g[4]==='proc'||g[4]==='raw')&&n>=5){say('Стоп: шестая покупка одного и того же продукта похожа на накопление. Накапливать продукты, чтобы поднять цены, на острове запрещено.','bad');return;}
+    if(st.w<g[3]){say('Не хватает монет: в кошельке '+T(st.w)+', а нужно '+T(g[3])+'. Это и есть дефицит: приходится выбирать, от чего отказаться.','bad');return;}
+    st.w-=g[3];st.cnt[g[0]]=n+1;st.last=g;var alt=Math.floor(g[3]/3);
+    say('Куплено: '+g[2]+' за '+T(g[3])+'.'+(g[0]!=='bread'&&alt>=1?' Альтернативная стоимость: на эти монеты можно было купить '+alt+' × хлеб.':''),'ok');}
+  shelf.addEventListener('click',function(e){var b=e.target.closest('.mk-item');if(!b)return;buy(+b.dataset.i);render();});
+  side.addEventListener('click',function(e){var b=e.target.closest('[data-a]');if(!b)return;var a=b.dataset.a;
+    if(a==='day'){st.w+=8;say('Зарплата за день работы: +8 T. Предприятие платит работнику из денег, которые получило от покупателей.','ok');}
+    else if(a==='hard'){st.w+=16;say('Работу, которую никто не любит, делают по очереди и оплачивают вдвойне: +16 T.','ok');}
+    else if(a==='pub'){say('Общественный день не оплачивается: это налог, который платят временем. Взамен — бесплатные клиника, школа и чистая вода.','mid');}
+    else if(a==='bank'){if(st.w<=0){say('В кошельке пусто — класть в Банк нечего.','mid');}else{st.dep+=st.w;st.w=0;say('Вклад в Банке острова: '+T(st.dep)+'. Через год будет '+T(st.dep*1.03)+' (+3%). Цель по инфляции — не больше 2%, поэтому сбережения растут быстрее цен. Банк выдаст эти монеты в кредит под 5% на лодки и инструменты, а каждую пятую оставит в хранилище.','ok');}}
+    else if(a==='reset'){fresh();}
+    render();});
+  fresh();render();
+})();
+
+/* ---------- Council cabinet: a small model of the island economy ---------- */
+(function(){var root=document.getElementById('cabinet');if(!root)return;
+  var DEF={n:750,y:100,d:1,r:20,i:40,cH:false,cM:false,cW:false,fH:false,fM:false,fW:false},S={};
+  function reset(){for(var k in DEF)S[k]=DEF[k];}
+  /* all values are model units; the formulas are listed on the page under "Как считает модель" */
+  function calc(s){
+    var k=s.n/750,LP=100*k*s.d/6,LM=100*k-LP,LM0=500/6,land=Math.min(1,LM/LM0);
+    var cap=120*(s.cW?0.6:1),save=s.cW&&s.fW,dn=15*k,hn=25*k*(save?0.8:1),fn=60*(save?0.85:1);
+    var dg=Math.min(cap,dn),hg=Math.min(cap-dg,hn),fg=Math.min(cap-dg-hg,fn),irr=fg/fn;
+    var mk=s.cM?(s.fM?0.8:0.5):1,infra=Math.min(1.2,LP*(s.i/100)/(20/3)*mk),serv=Math.min(1.2,LP*(1-s.i/100)/(10*k)),loss=0.15*(1-Math.min(1,infra));
+    var H=100*(s.y/100)*(s.cH?0.7:1)*land*(0.5+0.5*irr)*(1-loss);
+    var add=H*s.r/100,table=H-add,need=80*k,rel=s.fH?Math.min(s.r,Math.max(0,need-table)):0;table+=rel;
+    var store=s.r-rel+add,idle=s.cM&&!s.fM?5:0;
+    return{LP:LP,land:land,irr:irr,people:dg/dn>0.999&&hg/hn>0.999,infra:infra,serv:serv,loss:loss,H:H,rel:rel,cover:table/need,
+      price:table>0?Math.max(-15,Math.min(150,(need/table-1)*100)):150,weeks:store/need*52,
+      goods:(LM-idle*k)/LM0*100*(s.cM?(s.fM?0.8:0.6):1),emp:100-idle,bud:10*k+20/3};}
+  var kp=document.getElementById('cabKpis'),wn=document.getElementById('cabWarn');
+  function pc(v){return Math.round(v*100)+'%';}
+  function num(v){return v.toFixed(1).replace('.',',');}
+  function lv(v,a,b){return v>=a?'ok':v>=b?'mid':'bad';}
+  function seg(fr,cls){var n=Math.max(0,Math.min(10,Math.round(fr*10))),h='';for(var i=0;i<10;i++)h+='<i'+(i<n?' class="'+cls+'"':'')+'></i>';return'<span class="seg10" aria-hidden="true">'+h+'</span>';}
+  function tile(ic,lbl,val,sub,fr,cls){return'<div class="slot ck '+(cls==='ok'?'':cls)+'"><span class="lbl">'+ico(ic)+lbl+'</span><span class="val">'+val+'</span>'+(fr==null?'':seg(fr,cls))+'<span class="sm">'+sub+'</span></div>';}
+  var CHAIN={cH:[['wheat','Неурожай −30%'],['mill','Заводу меньше сырья'],['market','Меньше товаров'],['up','Цены вверх'],['coin','Монета под давлением']],
+    cM:[['pickaxe','Шахта стоит'],['brick','Нет камня и руды'],['road','Ремонт дорог и домов замедлен'],['people','Шахтёры без работы']],
+    cW:[['reservoir','Воды на 40% меньше'],['people','Сначала питьё и быт'],['field','Полям достаётся остаток'],['wheat','Урожай падает']]};
+  function render(){var o=calc(S),W=[],h='',pr=Math.round(o.price);
+    document.getElementById('cv_n').textContent=String(S.n).replace(/^(\d)(\d{3})$/,'$1 $2');
+    document.getElementById('cv_y').textContent=S.y+'%';document.getElementById('cv_d').textContent=S.d;
+    document.getElementById('cv_r').textContent=S.r+'%';document.getElementById('cv_i').textContent=S.i+'%';
+    document.getElementById('ch_d').textContent=S.d?'≈ '+Math.round(S.d/6*100)+'% рабочего времени. Главный налог острова платится временем.':'Общественных работ нет: налог равен нулю.';
+    kp.innerHTML=
+      tile('bread','Еда на столе',pc(o.cover),'от потребности жителей',o.cover,lv(o.cover,0.995,0.85))+
+      tile('up','Цены корзины',(pr>0?'+':pr<0?'−':'')+Math.abs(pr)+'%','давление на цены · цель ≤ 2%',null,pr<=2?'ok':pr<=10?'mid':'bad')+
+      tile('chest','Резерв зерна',Math.round(o.weeks)+' нед.','на столько хватит запаса',o.weeks/26,lv(o.weeks,12,4))+
+      tile('drop','Вода для полей',pc(o.irr),o.people?'питьё и быт обеспечены':'не хватает даже людям',o.irr,o.people?lv(o.irr,0.995,0.6):'bad')+
+      tile('hall','Бюджет Совета',num(o.LP)+' / '+num(o.bud),'общественный труд: есть / нужно',o.LP/o.bud,lv(o.LP/o.bud,0.995,0.85))+
+      tile('cross','Службы',pc(o.serv),'клиника, школа, водная служба',o.serv,lv(o.serv,0.995,0.8))+
+      tile('road','Инфраструктура',pc(o.infra),'дороги, каналы, склады',o.infra,lv(o.infra,0.995,0.8))+
+      tile('hammer','Товары и стройка',Math.round(o.goods),'индекс: 100 — как сейчас',o.goods/100,lv(o.goods/100,0.995,0.8))+
+      tile('people','Занятость',o.emp+'%',o.emp<100?'часть работников простаивает':'у каждого есть работа',o.emp/100,o.emp<100?'mid':'ok')+
+      tile('coin','Terra Coin','<span style="font-size:20px">'+(o.H>100.5?'Выпуск возможен':o.H<99.5?'Выпуск заморожен':'Без изменений')+'</span>','монета обеспечена зерном',null,o.H<99.5?'mid':'ok');
+    if(!o.people)W.push(['bad','drop','Воды не хватает даже людям','Питьё и быт идут первыми, но запаса мало. Нужен режим экономии, а в будущем — сбор дождевой воды.']);
+    else if(o.irr<0.995)W.push([o.irr<0.6?'bad':'mid','drop','Полям не хватает воды','По правилу острова вода идёт сначала на питьё, затем на быт и только потом на поля. Поля получают '+pc(o.irr)+' нужной воды.']);
+    if(o.cover<0.995)W.push([o.cover<0.85?'bad':'mid','bread','Еды не хватает','На столе '+pc(o.cover)+' от потребности. '+(S.n>750?'Жителей стало больше, а земли столько же — это и есть дефицит. ':'')+'Совет может '+(S.fH?'':'открыть резерв, ')+'уменьшить долю резерва или поднять урожайность: севооборот, орошение, компост.']);
+    if(pr>2)W.push([pr>10?'bad':'mid','up','Цены растут быстрее цели','Давление на цены +'+pr+'% при цели не больше 2% в год. Зарплаты растут вместе с ценами, а накапливать продукты запрещено.']);
+    if(o.weeks<4)W.push(['bad','chest','Резерв почти пуст','Запаса зерна хватит на '+Math.round(o.weeks)+' нед. Неурожай ударит сразу и по столу, и по Terra Coin: монета обеспечена зерном.']);
+    if(S.d===0)W.push(['bad','hall','Общественных работ нет','Без общественного дня некому работать в клинике и школе и чинить дороги. Это цена нулевого налога.']);
+    else{if(o.serv<0.995)W.push([o.serv<0.8?'bad':'mid','cross','Службам не хватает рук','Клиника, школа и водная служба работают на '+pc(o.serv)+'. Базовые потребности гарантированы каждому, поэтому нужен ещё общественный труд или другая его делёжка.']);
+      if(o.infra<0.995)W.push([o.infra<0.8?'bad':'mid','road','Дороги и каналы изнашиваются','Инфраструктура на '+pc(o.infra)+': при перевозке и хранении теряется '+Math.round(o.loss*100)+'% урожая.']);}
+    if(o.land<0.995)W.push(['mid','field','Не хватает рук на полях','Земля обработана на '+pc(o.land)+': рабочее время ушло на общественные работы. Это их альтернативная стоимость.']);
+    if(S.d>=2)W.push(['mid','clock','Меньше свободного времени','Жители отдают общине '+S.d+' дня в неделю. Цель индекса счастья по свободному времени — 8 из 10.']);
+    if(o.emp<100)W.push(['mid','people','Шахтёры без работы','5% работников простаивают. На острове каждый знает две профессии: включите «Вторую профессию».']);
+    if(o.H<99.5)W.push(['mid','coin','Выпуск Terra Coin заморожен','Монета обеспечена зерном, а урожай ниже обычного, поэтому Банк острова не выпускает новые монеты.']);
+    ['cH','cM','cW'].forEach(function(c){if(!S[c])return;h+='<div class="casc">'+CHAIN[c].map(function(st,i){return(i?'<span class="carr" aria-hidden="true"></span>':'')+'<span class="cstep'+(i?'':' first')+'">'+ico(st[0])+st[1]+'</span>';}).join('')+'</div>';});
+    var rank={bad:0,mid:1};W.sort(function(a,b){return rank[a[0]]-rank[b[0]];});
+    if(!W.length)h+='<div class="wr ok">'+ico('shield')+'<div><b>Тревог нет</b><span>Еды хватает, службы работают, резерв на месте. Измените условия или включите кризис и посмотрите, что произойдёт.</span></div></div>';
+    else W.slice(0,6).forEach(function(w){h+='<div class="wr '+w[0]+'">'+ico(w[1])+'<div><b>'+w[2]+'</b><span>'+w[3]+'</span></div></div>';});
+    if(o.rel>0)h+='<div class="wr ok">'+ico('chest')+'<div><b>Резерв открыт</b><span>Из хранилища на стол ушло '+num(o.rel)+' ед. зерна. Для этого резерв и копили в хорошие годы.</span></div></div>';
+    wn.innerHTML='<h3>'+(W.length?'Что видит Совет':'Остров в балансе')+'</h3>'+h;}
+  function sync(){root.querySelectorAll('input[data-k]').forEach(function(i){i.value=S[i.dataset.k];});
+    root.querySelectorAll('input[data-f]').forEach(function(i){i.checked=S[i.dataset.f];});
+    root.querySelectorAll('.cz').forEach(function(b){b.setAttribute('aria-pressed',S[b.dataset.c]);});
+    root.querySelectorAll('[data-for]').forEach(function(l){l.hidden=!S[l.getAttribute('data-for')];});}
+  root.addEventListener('input',function(e){var t=e.target;if(t.dataset.k){S[t.dataset.k]=+t.value;render();}});
+  root.addEventListener('change',function(e){var t=e.target;if(t.dataset.f){S[t.dataset.f]=t.checked;render();}});
+  root.addEventListener('click',function(e){var b=e.target.closest('.cz');if(!b)return;var c=b.dataset.c;S[c]=!S[c];if(!S[c]){if(c==='cM')S.fM=false;if(c==='cW')S.fW=false;}sync();render();});
+  document.getElementById('cabReset').addEventListener('click',function(){reset();sync();render();});
+  document.getElementById('cab10').addEventListener('click',function(){S.n=1050;sync();render();});
+  reset();sync();render();
+})();
+
+/* ---------- presentation mode ---------- */
+(function(){var btn=document.getElementById('prBtn');if(!btn)return;
+  var secs=[].slice.call(document.querySelectorAll('main > section')),on=false,wasFs=false,bar=document.createElement('div'),tick=0;
+  bar.className='pbar';bar.hidden=true;
+  bar.innerHTML='<button data-a="prev" aria-label="Предыдущий раздел">◀</button><span id="pLbl"></span><button data-a="next" aria-label="Следующий раздел">▶</button><button data-a="exit" aria-label="Выйти из режима презентации">✕</button>';
+  document.body.appendChild(bar);
+  function name(s){var e=s.querySelector('.eyebrow');return s.getAttribute('aria-label')||(e?e.textContent.split('·')[0].trim():'');}
+  function idx(){var y=window.innerHeight*0.4,k=0;secs.forEach(function(s,i){if(s.getBoundingClientRect().top<=y)k=i;});return k;}
+  function label(){var i=idx();document.getElementById('pLbl').textContent=(i+1)+' / '+secs.length+' · '+name(secs[i]);}
+  function go(i){i=Math.max(0,Math.min(secs.length-1,i));secs[i].scrollIntoView({behavior:reduce?'auto':'smooth',block:'start'});}
+  function set(v){on=v;document.body.classList.toggle('present',v);btn.setAttribute('aria-pressed',v);bar.hidden=!v;
+    var el=document.documentElement;
+    if(v){if(el.requestFullscreen){try{var p=el.requestFullscreen();if(p&&p.catch)p.catch(function(){});}catch(_){}}}
+    else if(document.fullscreenElement&&document.exitFullscreen){document.exitFullscreen();}
+    setTimeout(function(){window.dispatchEvent(new Event('resize'));label();},80);}
+  btn.addEventListener('click',function(){set(!on);});
+  bar.addEventListener('click',function(e){var b=e.target.closest('button');if(!b)return;var a=b.dataset.a;if(a==='exit')set(false);else go(idx()+(a==='next'?1:-1));});
+  document.addEventListener('fullscreenchange',function(){if(document.fullscreenElement){wasFs=true;}else if(on&&wasFs){wasFs=false;set(false);}});
+  document.addEventListener('keydown',function(e){if(!on)return;var t=e.target.tagName;if(t==='INPUT'||t==='TEXTAREA'||t==='SELECT')return;
+    if(e.key==='ArrowRight'||e.key==='PageDown'){e.preventDefault();go(idx()+1);}
+    else if(e.key==='ArrowLeft'||e.key==='PageUp'){e.preventDefault();go(idx()-1);}
+    else if(e.key==='Escape'){set(false);}});
+  window.addEventListener('scroll',function(){if(!on)return;clearTimeout(tick);tick=setTimeout(label,120);},{passive:true});
 })();
 
 /* ---------- nav highlight ---------- */
